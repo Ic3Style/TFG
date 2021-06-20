@@ -2,14 +2,15 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 //import Player, { CatanPlayer } from "./Player.js";
 //import { Location } from "./Location.js";
 import { roadData } from "./roadData.js";
+import { placeData } from "./placeData.js";
 
 export const Catan = {
     setup: (ctx) => createInitialState(),
-    
+ /*   
     turn: {
         moveLimit: 5, //realmente no tiene limite
       },
-
+*/
     moves: {
         clickCell: (G, ctx, id) => { //este hay que borrarlo
             if (G.cells[id] !== null) {
@@ -23,8 +24,23 @@ export const Catan = {
             G.diceValue = roll;
         },
         buildRoad,
-        buildSettlement: (G, ctx, id) => {
 
+        addRss: (G, ctx) => { //ADMIN ACTION
+          let playerID = 'player_' + ctx.currentPlayer;
+          let cPlayer = G[playerID];
+
+          cPlayer.resources.lumber ++;
+          cPlayer.resources.brick ++;
+          cPlayer.resources.ore ++;
+          cPlayer.resources.wool ++;
+          cPlayer.resources.grain ++;
+        }
+        , 
+        
+        
+        buildFirstSettlement,
+        buildSettlement,
+        /*
         },
         buildCity: (G, ctx, id) => {
 
@@ -35,6 +51,7 @@ export const Catan = {
         placeRobber: () => {},
         selectPlayer: () => {},
         discard: () => {},
+        */
     },
 
     //HAY QUE MODIFICARLO   
@@ -61,11 +78,87 @@ export const Catan = {
     return array;
   }
 
-  function buildRoad (G, ctx, id){
+  function buildFirstSettlement (G, ctx, id){
+    //ESTADO: TERMINADA NO REVISADA
+    //FUNCION: Construye los primeros pueblos sin coste al inicio del juego
 
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
-    alert("cPlayer v1 es: "+cPlayer)
+
+    if(G.placeCells[id].type !== -1){
+      alert("Ese punto ya tiene una construccion");
+      return INVALID_MOVE;
+    }
+
+    if(checkProximity(G, id) === false){
+      alert("No cumples la regla de proximidad con otros pueblos");
+      return INVALID_MOVE;
+    }
+
+    G.placeCells[id].type = 0;
+    G.placeCells[id].owner = ctx.currentPlayer;
+    cPlayer.settlements.push(G.placeCells[id]);
+
+    for(let i = 0; i<G.placeCells[id].tiles.length; i++){
+      let id_t = G.placeCells[id].tiles[i];
+      cPlayer.ownedTiles.push(G.terrainCells[id_t]);
+    }
+    cPlayer.points++;    
+  }
+
+  function buildSettlement (G, ctx, id){
+    //ESTADO: EN PROCESO
+    //TO-DO: LIMITACION DE 5 PUEBLOS
+    //FUNCION: Construye un pueblo con las reglas normales del juego en la localizacion id
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    if(cPlayer.resources.lumber < 1 || cPlayer.resources.brick <1  || cPlayer.resources.grain <1 || cPlayer.resources.wool <1){
+      alert("No tienes suficientes recursos");
+      return INVALID_MOVE;
+    }
+
+    if(G.placeCells[id].type !== -1){
+      alert("Ese punto ya tiene una construccion");
+      return INVALID_MOVE;
+    }
+
+    if(checkProximity(G, id) === false){
+      alert("No cumples la regla de proximidad con otros pueblos");
+      return INVALID_MOVE;
+    }
+
+    if(checkSettlementConection(G, cPlayer, id) === false){
+      alert("No tienes conexion con ese punto por carretera");
+      return INVALID_MOVE;
+    }
+
+    cPlayer.resources.brick--;
+    cPlayer.resources.lumber--;
+    cPlayer.resources.grain--;
+    cPlayer.resources.wool--;
+
+    G.placeCells[id].type = 0;
+    G.placeCells[id].owner = ctx.currentPlayer;
+    cPlayer.settlements.push(G.placeCells[id]);
+
+    for(let i = 0; i<G.placeCells[id].tiles.length; i++){
+      let id_t = G.placeCells[id].tiles[i];
+      cPlayer.ownedTiles.push(G.terrainCells[id_t]);
+    }
+    
+    cPlayer.points++;    
+  }
+
+
+  function buildRoad (G, ctx, id){
+    //ESTADO: EN PROCESO
+    //TO-DO: LIMITACION DE NUMERO DE CARRETERAS
+    //FUNCIÓN: Construye una carretera siguiendo las reglas del juego en la carretera id
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
 
     if(cPlayer.resources.lumber < 1 || cPlayer.resources.brick <1){
       alert("No tienes suficientes recursos");
@@ -77,37 +170,77 @@ export const Catan = {
       return INVALID_MOVE;
     }
 
-    if(checkRoadBuild(G, cPlayer, id) === false){
+    if(checkRoadConection(G, cPlayer, id) === false){
       alert("No tienes conexion con esa casilla de carretera");
       return INVALID_MOVE;
     }
 
-    // 1 de madera y 1 de arcilla
-    G.roadCells[id] = ctx.currentPlayer;
+    //Coste 1 de madera y 1 de arcilla
+    G.roadCells[id].value = ctx.currentPlayer;
+    cPlayer.roads.push(G.roadCells[id]);
     cPlayer.resources.brick--;
     cPlayer.resources.lumber--;
 
-    return 1;
   }
 
-  function checkRoadBuild(G, cPlayer, id){
-    alert("cPlayer v2 es: "+cPlayer)
-    //primero busca en los pueblos/ciudades
+  function checkProximity(G, id){
+    //ESTADO: TERMINADA NO REVISADA
+    //FUNCION: Comprueba si un pueblo cumple la regla de 2 de distancia con el resto de pueblos
+
+    for(let i=0; i<G.placeCells.length; i++){
+      for(let j=0; j<G.placeCells[i].nearTo.length; j++){
+        if(G.placeCells[i].nearTo[j] === id){
+          if(G.placeCells[i].owner !== -1){
+            alert("No cumple la regla de distancia con casilla "+G.placeCells[i].id)
+            return false
+          }
+        }
+      }
+    }
+    return true; 
+  }
+
+  function checkRoadConection(G, cPlayer, id){
+    //ESTADO: TERMINADA NO REVISADA
+    //FUNCION: Comprueba que la carretera que va a construirse tenga conexion con otras estructuras del jugador
+
+    //primero busca en los pueblos
     for(let i=0; i<cPlayer.settlements.length; i++){
-      if(cPlayer.settlements[i] === G.roadCells[id].to || cPlayer.settlements[i] === G.roadCells[id].from)
+      if(cPlayer.settlements[i].id === G.roadCells[id].to || cPlayer.settlements[i].id === G.roadCells[id].from)
         return true;
     }
+    //segundo en las ciudades
     for(let i=0; i<cPlayer.cities.length; i++){
-      if(cPlayer.cities[i] === G.roadCells[id].to || cPlayer.cities[i] === G.roadCells[id].from)
+      if(cPlayer.cities[i].id === G.roadCells[id].to || cPlayer.cities[i].id === G.roadCells[id].from)
         return true;
     }
-    //ahora mira si tiene conectadas carreteras del mismo jugador
-    //ERROR AQUI
-    return true;
+    //por ultimo por carretera
+    for(let i=0; i<cPlayer.roads.length; i++){
+      if(cPlayer.roads[i].from === G.roadCells[id].from || cPlayer.roads[i].from === G.roadCells[id].to ||
+        cPlayer.roads[i].to === G.roadCells[id].from || cPlayer.roads[i].to === G.roadCells[id].to ){
+          return true;
+        }
+    }
+
+    return false;
   }
 
-  //Devuelve el recurso de la casilla de terreno correspondiente
+  function checkSettlementConection(G, cPlayer, id){
+    //ESTADO: TERMINADA NO REVISADA
+    //FUNCION: Comprueba si el pueblo que va a construirse tiene conexion por carretera con el jugador
+
+    //solo hace falta mirar si hay carreteras conectadas
+    for(let i=0; i<cPlayer.roads.length; i++){
+      if(cPlayer.roads[i].from === G.placeCells[id].id || cPlayer.roads[i].to === G.placeCells[id].id){
+            return true;
+          }
+    }
+    return false; 
+  }
+
   function rssFromTile(tile){
+    //ESTADO: TERMINADA REVISADA
+    //FUNCION: Devuelve el recurso de la casilla de terreno correspondiente
 
     let rss;
     switch(tile){
@@ -137,6 +270,9 @@ export const Catan = {
     }
 
   function createInitialState(){
+    //ESTADO: EN PROCESO
+    //TO-DO: 
+    //FUNCION: Crea el estado inicial de G
 
     var locations = ["Hills", "Hills", "Hills",
     "Forest", "Forest", "Forest", "Forest",
@@ -187,191 +323,7 @@ export const Catan = {
     //INTERSECCIONES
     for(let i=0; i<54; i++){
       let cell;
-      if(i<3){
-        cell = {
-          id: i,
-          type: -1, //-1: nada; 0:pueblo; 1:ciudad
-          owner: -1,
-          nearTo: [i+3, i+4]
-        }
-     }
-     else if(i === 3){ 
-        cell = {
-          id: i,
-          type: -1, //-1: nada; 0:pueblo; 1:ciudad
-          owner: -1,
-          nearTo: [i-3, i+4]
-        }
-      }
-    else if(i < 6){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i-3, i+4]
-      }
-    }
-    else if(i === 6){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i+4]
-      }
-    }
-    else if(i < 11){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i+4, i+5]
-      }
-    }
-    else if(i === 11){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i+5]
-      }
-    }
-    else if(i < 15){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i-4, i+5]
-      }
-    }
-    else if(i === 15){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i+5]
-      }
-    }
-    else if(i < 21){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i+5, i+6]
-      }
-    }
-    else if(i === 21){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i+6]
-      }
-    }
-    else if(i < 26){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-6, i-5, i+6]
-      }
-    }
-    else if(i < 28){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-6, i+6]
-      }
-    }
-    else if(i < 32){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-6, i+5, i+6]
-      }
-    }
-    else if(i === 32){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-6, i+5]
-      }
-    }
-    else if(i < 38){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-6, i-5, i+5]
-      }
-    }
-    else if(i === 38){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i+5]
-      }
-    }
-    else if(i < 42){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i+4, i+5]
-      }
-    }
-    else if(i === 42){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i+4]
-      }
-    }
-    else if(i < 47){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-5, i-4, i+4]
-      }
-    }
-    else if(i === 47){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i+4]
-      }
-    }
-    else if(i < 50){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i+3, i+4]
-      }
-    }
-    else if(i === 50){
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i+3]
-      }
-    }
-    else {
-      cell = {
-        id: i,
-        type: -1, //-1: nada; 0:pueblo; 1:ciudad
-        owner: -1,
-        nearTo: [i-4, i-3]
-      }
-    }
-
+      cell = placeData[i];
       intersectionPlaces.push(cell);
     }
 
@@ -391,6 +343,7 @@ export const Catan = {
         player1: new CatanPlayer('player1', 'red'),
         player2: new CatanPlayer('player2', 'blue'),
         */
+        diceValue: 0 ,
      
         player_0: {
           name : 'player_0',
@@ -406,9 +359,11 @@ export const Catan = {
               grain: 0,
               wool: 0
           },
-          ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
+          //ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
+          ownedTiles : [],
           settlements : [],
           cities : [],
+          roads : [],
         },
         
         player_1: {
@@ -425,9 +380,11 @@ export const Catan = {
               grain: 0,
               wool: 0
           },
-          ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
+          //ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
+          ownedTiles : [],
           settlements : [],
           cities : [],
+          roads : [],
         },
 
         resourcesDeck : {
@@ -440,12 +397,20 @@ export const Catan = {
 
         terrainCells: terrainPlaces,
         roadCells: roadPlaces,
-        placeCells: intersectionPlaces,
-        diceValue: 0 
+        placeCells: intersectionPlaces
+        
         
     }
     
   };
+
+  function diceRoll() {
+    //ESTADO: TERMINADA REVISADA
+    //FUNCION: Suma dos dados con valor posible 1-6 
+
+    return Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
+    };
+    
 /*
   function createPlayers(ctx){
 
@@ -459,10 +424,7 @@ export const Catan = {
     return players;
   }
 */
-  function diceRoll() {
-    // Sum two dice rolls 1-6
-    return Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
-    };
+
 
 
 /*
