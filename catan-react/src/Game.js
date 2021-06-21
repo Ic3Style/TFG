@@ -23,6 +23,8 @@ export const Catan = {
             let roll = diceRoll();
             G.diceValue = roll;
         },
+
+        buildFirstRoad,
         buildRoad,
 
         addRss: (G, ctx) => { //ADMIN ACTION
@@ -37,14 +39,11 @@ export const Catan = {
         }
         , 
         
-        
         buildFirstSettlement,
         buildSettlement,
-        /*
-        },
-        buildCity: (G, ctx, id) => {
+        buildCity,
 
-        },
+        /*
         buyCard: () => {},
 
         trade: () => {},
@@ -69,6 +68,9 @@ export const Catan = {
 
 
   function shuffle (array) {
+    //ESTADO: TERMINADA REVISADA
+    //FUNCION: Baraja el array que se le pase por parametro
+
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       const temp = array[i];
@@ -77,6 +79,15 @@ export const Catan = {
     }
     return array;
   }
+
+  function removeItemFromArr ( arr, item ) {
+    //ESTADO: TERMINADO REVISADO
+    //FUNCION: Borra un elemento de un array
+
+    var i = arr.indexOf( item );
+    alert("index: "+i)
+    arr.splice( i, 1 );
+}
 
   function buildFirstSettlement (G, ctx, id){
     //ESTADO: TERMINADA NO REVISADA
@@ -151,6 +162,28 @@ export const Catan = {
     cPlayer.points++;    
   }
 
+  function buildFirstRoad (G, ctx, id){
+    //ESTADO: EN PROCESO
+    //TO-DO: NECESITA FUNCIONES PROPIAS PARA COMPROBAR QUE SE CONSTRUYA JUNTO AL NUEVO EDIFICIO
+    //FUNCIÓN: Construye las primeras carreteras sin coste al inicio de la partida
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    if(G.roadCells[id].value !== -1){
+      alert("La carretera ya tiene dueño");
+      return INVALID_MOVE;
+    }
+
+    if(checkRoadConection(G, cPlayer, id) === false){
+      alert("No tienes conexion con esa casilla de carretera");
+      return INVALID_MOVE;
+    }
+
+    //Coste 1 de madera y 1 de arcilla
+    G.roadCells[id].value = ctx.currentPlayer;
+    cPlayer.roads.push(G.roadCells[id]);
+  }
 
   function buildRoad (G, ctx, id){
     //ESTADO: EN PROCESO
@@ -181,6 +214,55 @@ export const Catan = {
     cPlayer.resources.brick--;
     cPlayer.resources.lumber--;
 
+  }
+
+  function buildCity (G, ctx, id){
+    //ESTADO: TERMINADO SIN REVISAR
+    //TO-DO: 
+    //FUNCION: Construye una ciudad encima de un pueblo con las reglas normales del juego en la localizacion id
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    if( cPlayer.resources.grain <2 || cPlayer.resources.ore <3){
+      alert("No tienes suficientes recursos");
+      return INVALID_MOVE;
+    }
+
+    if(G.placeCells[id].type !== 0){
+      alert("Necesitas construir una ciudad encima de un pueblo");
+      return INVALID_MOVE;
+    }
+
+    let booleanC = false;
+    for(let i=0; i<cPlayer.settlements.length; i++){
+      if(cPlayer.settlements[i].id === id)
+        booleanC = true;
+    }
+
+    if(booleanC === false){
+      alert("No posees un pueblo en la casilla seleccionada");
+      return INVALID_MOVE;
+    }
+
+    //Se elimina de la lista de settlements del jugador
+    let cityFilter = cPlayer.settlements.filter(obj => obj.id === id)
+    //alert(JSON.stringify(cityFilter[0], null, 4));
+    removeItemFromArr(cPlayer.settlements, cityFilter[0])
+
+    cPlayer.resources.ore -= 3;
+    cPlayer.resources.grain -= 2;
+    
+    G.placeCells[id].type = 1;
+    cPlayer.cities.push(G.placeCells[id]);
+
+    //uan ciudad cuenta como dos pueblos para el recurso correspondiente
+    for(let i = 0; i<G.placeCells[id].tiles.length; i++){
+      let id_t = G.placeCells[id].tiles[i];
+      cPlayer.ownedTiles.push(G.terrainCells[id_t]);
+    }
+    
+    cPlayer.points++;
   }
 
   function checkProximity(G, id){
@@ -410,7 +492,7 @@ export const Catan = {
 
     return Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
     };
-    
+
 /*
   function createPlayers(ctx){
 
