@@ -18,11 +18,14 @@ export const Catan = {
             }
             G.cells[id] = ctx.currentPlayer;
           },
-          
+
+        trowDice,
+        /* //NO DEBERIA SER UNA ACCION  
         diceRoll: (G) => {
             let roll = diceRoll();
             G.diceValue = roll;
         },
+        */
 
         buildFirstRoad,
         buildRoad,
@@ -36,36 +39,48 @@ export const Catan = {
           cPlayer.resources.ore ++;
           cPlayer.resources.wool ++;
           cPlayer.resources.grain ++;
-        }
-        , 
+        },
+        
+        addPoint: (G, ctx) => { //ADMIN ACTION
+          let playerID = 'player_' + ctx.currentPlayer;
+          let cPlayer = G[playerID];
+
+          cPlayer.points++;
+        },
         
         buildFirstSettlement,
         buildSettlement,
         buildCity,
+        buyDevCard,
 
         /*
-        buyCard: () => {},
-
         trade: () => {},
         placeRobber: () => {},
         selectPlayer: () => {},
         discard: () => {},
+        useKnight,
+        useInvent,
+        useMonopoly,
         */
     },
 
     //HAY QUE MODIFICARLO   
- /*
+ 
     endIf: (G, ctx) => {
-        if (IsVictory(G.cells)) {
+        if (IsVictory(G, ctx)) {
+          alert("GAME FINISHED");
           return { winner: ctx.currentPlayer };
         }
+        /*
         if (IsDraw(G.cells)) {
           return { draw: true };
         }
+        */
       },
-*/
+
   };
 
+  //FUNCIONES TECNICAS DE JAVASCRIPT
 
   function shuffle (array) {
     //ESTADO: TERMINADA REVISADA
@@ -87,10 +102,69 @@ export const Catan = {
     var i = arr.indexOf( item );
     alert("index: "+i)
     arr.splice( i, 1 );
-}
+  }
+
+  //FUNCIONES DE ACCIONES DEL JUEGO
+
+  function diceRoll() {
+    //ESTADO: TERMINADA REVISADA
+    //FUNCION: Suma dos dados con valor posible 1-6 
+
+    return Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
+  };
+
+  function trowDice (G, ctx){
+    //ESTADO: EN PROGRESO
+    //TO-DO: LADRON
+    //FUNCION: Tira los dados y realiza la accion correspondiente (recursos y ladron)
+
+    let numberDice = diceRoll();
+    
+    if(numberDice === 7){
+      //parte del ladron
+    }
+    else{
+
+      for(let i=0; i<ctx.numPlayers; i++){
+
+        let playerID = 'player_' + i;
+        let cPlayer = G[playerID];
+
+        for(let j=0; j<cPlayer.ownedTiles.length; i++){
+          if(cPlayer.ownedTiles[j].number === numberDice){
+            let rssName = cPlayer.ownedTiles[j].rss;
+            switch(rssName){
+              case "ore":
+                cPlayer.resources.ore++;
+                break;
+              case "grain":
+                cPlayer.resources.grain++;
+                break;
+              case "wool":
+                cPlayer.resources.wool++;
+                break;
+              case "brick":
+                cPlayer.resources.brick++;
+                break;
+              case "lumber":
+                cPlayer.resources.lumber++;
+                break;
+              default:
+                throw new Error("Non existing rss in function throwDice");
+            }
+
+          }
+        }
+
+      }
+
+    }
+
+  }
 
   function buildFirstSettlement (G, ctx, id){
-    //ESTADO: TERMINADA NO REVISADA
+    //ESTADO: EN PROGRESO
+    //TO-DO: PUERTOS
     //FUNCION: Construye los primeros pueblos sin coste al inicio del juego
 
     let playerID = 'player_' + ctx.currentPlayer;
@@ -119,7 +193,7 @@ export const Catan = {
 
   function buildSettlement (G, ctx, id){
     //ESTADO: EN PROCESO
-    //TO-DO: LIMITACION DE 5 PUEBLOS
+    //TO-DO: LIMITACION DE 5 PUEBLOS, PUERTOS
     //FUNCION: Construye un pueblo con las reglas normales del juego en la localizacion id
 
     let playerID = 'player_' + ctx.currentPlayer;
@@ -265,6 +339,32 @@ export const Catan = {
     cPlayer.points++;
   }
 
+  function buyDevCard (G, ctx){
+    //ESTADO: EN PROCESO
+    //TO-DO: COMPROBAR SI LA CARTA ES UN PUNTO DE VICTORIA
+    //FUNCIÓN: Compra una carta de desarrollo
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    if(G.devCardsDeck.length === 0){
+      alert("No quedan cartas para comprar");
+      return INVALID_MOVE;
+    }
+
+    if(cPlayer.resources.ore < 1 || cPlayer.resources.grain <1 || cPlayer.resources.wool <1){
+      alert("No tienes suficientes recursos");
+      return INVALID_MOVE;
+    }
+
+    cPlayer.resources.ore--;
+    cPlayer.resources.grain--;
+    cPlayer.resources.wool--;
+
+    let newCard = G.devCardsDeck.pop();
+    cPlayer.devCards.push(newCard);
+  }
+
   function checkProximity(G, id){
     //ESTADO: TERMINADA NO REVISADA
     //FUNCION: Comprueba si un pueblo cumple la regla de 2 de distancia con el resto de pueblos
@@ -345,7 +445,7 @@ export const Catan = {
         rss = "grain";
         break;
       default:
-        throw new Error("Non existing rss");
+        throw new Error("Non existing rss in function rssFromTile");
     }
 
     return rss;
@@ -373,6 +473,12 @@ export const Catan = {
     var intersectionPlaces = [];
     var roadPlaces = [];
     let valIndex = 0;
+
+    //CARTAS DE DESARROLLO
+    var cards = ["knight","knight","knight","knight","knight","knight","knight","knight","knight","knight","knight","knight","knight","knight",
+    "victoryPoint","victoryPoint","victoryPoint","victoryPoint","victoryPoint","monopoly","monopoly","invent", "invent", "roadsBuild", "roadsBuild"];
+
+    cards = shuffle(cards);
 
     //CASILLAS DE RECURSOS
     for(let i=0; i<19; i++){
@@ -477,21 +583,39 @@ export const Catan = {
           wool: 19
         },
 
+        devCardsDeck: cards,
+
         terrainCells: terrainPlaces,
         roadCells: roadPlaces,
         placeCells: intersectionPlaces
+        
         
         
     }
     
   };
 
-  function diceRoll() {
-    //ESTADO: TERMINADA REVISADA
-    //FUNCION: Suma dos dados con valor posible 1-6 
+  // FUNCIONES DE ORGANIZACION DEL JUEGO
 
-    return Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
-    };
+  function IsVictory(G, ctx) {
+    //ESTADO: EN PROCESO
+    //TO-DO: MEJORAR LA INTERFAZ DEL GANADOR (MENSAJE)
+    //FUNCIÓN: Comprueba si alguien ha llegado al objetivo de puntuacion
+    
+    let finish = false;
+  
+    for(let i=0; i< ctx.numPlayers; i++){
+      let playerID = 'player_' + i;
+      let cPlayer = G[playerID];
+  
+      if (cPlayer.points >= 10){
+        finish = true;
+        alert("El jugador "+ i +" ha conseguido 10 puntos, se acabo")
+      }
+    }
+  
+    return finish;
+  }
 
 /*
   function createPlayers(ctx){
