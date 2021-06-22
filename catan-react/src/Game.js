@@ -4,6 +4,8 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
 
+//GENERAL TO_DO: Exportar los datos de cada turno a un txt.
+
 export const Catan = {
     setup: (ctx) => createInitialState(),
  /*   
@@ -20,12 +22,6 @@ export const Catan = {
           },
 
         trowDice,
-        /* //NO DEBERIA SER UNA ACCION  
-        diceRoll: (G) => {
-            let roll = diceRoll();
-            G.diceValue = roll;
-        },
-        */
 
         buildFirstRoad,
         buildRoad,
@@ -53,12 +49,14 @@ export const Catan = {
         buildCity,
         buyDevCard,
 
+        useKnight,
+
         /*
         trade: () => {},
         placeRobber: () => {},
         selectPlayer: () => {},
         discard: () => {},
-        useKnight,
+        
         useInvent,
         useMonopoly,
         */
@@ -71,11 +69,6 @@ export const Catan = {
           alert("GAME FINISHED");
           return { winner: ctx.currentPlayer };
         }
-        /*
-        if (IsDraw(G.cells)) {
-          return { draw: true };
-        }
-        */
       },
 
   };
@@ -104,6 +97,7 @@ export const Catan = {
     arr.splice( i, 1 );
   }
 
+
   //FUNCIONES DE ACCIONES DEL JUEGO
 
   function diceRoll() {
@@ -115,13 +109,17 @@ export const Catan = {
 
   function trowDice (G, ctx){
     //ESTADO: EN PROGRESO
-    //TO-DO: LADRON
+    //TO-DO: DESCARTAR 
     //FUNCION: Tira los dados y realiza la accion correspondiente (recursos y ladron)
 
     let numberDice = diceRoll();
+    G.diceValue = numberDice;
     
     if(numberDice === 7){
-      //parte del ladron
+      
+      //checkDiscard();
+      placeRobber(G, ctx);
+
     }
     else{
 
@@ -131,7 +129,7 @@ export const Catan = {
         let cPlayer = G[playerID];
 
         for(let j=0; j<cPlayer.ownedTiles.length; i++){
-          if(cPlayer.ownedTiles[j].number === numberDice){
+          if(cPlayer.ownedTiles[j].number === numberDice && cPlayer.ownedTiles[j].robber === false){
             let rssName = cPlayer.ownedTiles[j].rss;
             switch(rssName){
               case "ore":
@@ -420,6 +418,44 @@ export const Catan = {
     return false; 
   }
 
+  function placeRobber(G, ctx){
+    //ESTADO: EN PROGRESO
+    //TO-DO: ROBAR LA CARTA, SE PODRIA PONER CON ID EN ARGUMENTO?
+    //FUNCION: Mueve al ladron a la casilla que elijas y roba una carta a algun jugador coolindante
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    let finished = false;
+    
+    while(!finished){
+      //TO-DO: ESTO SOLO DEBERIA APARECERLE AL JUGADOR ACTUAL
+      let newID = prompt("¿A que casilla quiere mover el ladron?")
+      newID = parseInt(newID);
+      while(newID >18 || newID<0){
+        alert("Numero de casilla no valido");
+        newID = prompt("¿A que casilla quiere mover el ladron?")
+        newID = parseInt(newID);
+      }
+      
+
+      if(newID !== G.robberPos){
+
+        finished = true;
+        G.terrainCells[G.robberPos].robber = false;
+        G.terrainCells[newID].robber = true;
+        G.robberPos = newID;
+
+        //TO-DO:ROBAR LA CARTA AL JUGADOR
+
+      }
+      else{
+        alert("No puedes dejar el ladron en la misma casilla")
+      }
+    }
+
+  }
+
   function rssFromTile(tile){
     //ESTADO: TERMINADA REVISADA
     //FUNCION: Devuelve el recurso de la casilla de terreno correspondiente
@@ -451,6 +487,64 @@ export const Catan = {
     return rss;
     }
 
+
+  //FUNCIONES DE CARTAS DE DESARROLLO
+  
+  function useKnight(G, ctx){
+    //ESTADO: EN PROCESO
+    //TO-DO: TENER LA CARTA DE KNIGHT LMAO
+    //FUNCION: Usa la carta de caballero
+    
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    placeRobber(G, ctx);
+
+    cPlayer.usedKnights++;
+    checkKnightLeader(G, ctx);
+
+  }
+
+  function checkKnightLeader(G, ctx){
+    //ESTADO: EN PROCESO
+    //FUNCION: Comprueba si hay que cambiar la carta de mejor ejercito
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    //si la carta no ha sido reclamada por nadie
+    if(G.largestArmyId === -1){
+      if(cPlayer.usedKnights >= 3){
+        cPlayer.largestArmy = true;
+        G.largestArmyId = ctx.currentPlayer;
+        cPlayer.points += 2;
+        alert("La carta de mayor ejercito pasa a ser del jugador "+ctx.currentPlayer);
+      }
+    }
+    //si la carta ya la tiene algun jugador
+    else{
+      if(cPlayer.largestArmy === false){
+        let playerAuxId = 'player_' + G.largestArmyId;
+        //si hay un nuevo lider se cambia la carta de duenho
+        if(cPlayer.usedKnights > G[playerAuxId].usedKnights){
+          cPlayer.largestArmy = true;
+          cPlayer.points += 2;
+          G[playerAuxId].largestArmy = false;
+          G[playerAuxId].points -=2;
+          alert("La carta de mayor ejercito pasa del jugador "+G.largestArmyId +" al jugador "+ctx.currentPlayer);
+          G.largestArmyId = ctx.currentPlayer;
+        }       
+      }
+      else{
+        //El jugador ya tiene el ejercito mas grande
+      }
+    }
+
+  }
+
+
+  //FUNCION DE ESTADO INICIAL
+
   function createInitialState(){
     //ESTADO: EN PROCESO
     //TO-DO: 
@@ -480,19 +574,24 @@ export const Catan = {
 
     cards = shuffle(cards);
 
+    let firstRobber = -1;
+
     //CASILLAS DE RECURSOS
     for(let i=0; i<19; i++){
       let cell ;
-      if(locations[i] === "Dessert")
+      if(locations[i] === "Dessert"){
         //cell = new Location(i, locations[i], 0, 0, 0); //x e y nulas de momento
         cell = {
           id: i,
           tile: locations[i],
           rss: rssFromTile(locations[i]),
           number: 0,
+          robber: true,
           x: 0,
           y: 0
         }
+        firstRobber = i;
+      }
       else {
         //cell = new Location(i, locations[i], values[valIndex], 0, 0); //x e y nulas de momento
         cell = {
@@ -500,6 +599,7 @@ export const Catan = {
           tile: locations[i],
           rss: rssFromTile(locations[i]),
           number: values[valIndex],
+          robber: false,
           x: 0, //valdran para la interfaz
           y: 0
         }
@@ -532,12 +632,17 @@ export const Catan = {
         player2: new CatanPlayer('player2', 'blue'),
         */
         diceValue: 0 ,
+        robberPos: firstRobber,
+        longestRoadId: -1,
+        largestArmyId: -1,
      
         player_0: {
           name : 'player_0',
           color : 'red',
           points : 0,
+          biggestRoad : 0, //falta modificar esto
           longestRoad : false,
+          usedKnights : 0,
           largestArmy : false,
           devCards : [],
           resources : {
@@ -547,6 +652,7 @@ export const Catan = {
               grain: 0,
               wool: 0
           },
+
           //ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
           ownedTiles : [],
           settlements : [],
@@ -558,7 +664,9 @@ export const Catan = {
           name : 'player_1',
           color : 'blue',
           points : 0,
+          biggestRoad : 0, //falta modificar esto
           longestRoad : false,
+          usedKnights : 0,
           largestArmy : false,
           devCards : [],
           resources : {
