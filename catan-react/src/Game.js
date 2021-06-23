@@ -5,6 +5,7 @@ import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
 
 //GENERAL TO_DO: Exportar los datos de cada turno a un txt.
+//GENERAL TO_DO: En caso de que no queden sitios para construir para un jugador
 
 export const Catan = {
     setup: (ctx) => createInitialState(),
@@ -26,15 +27,15 @@ export const Catan = {
         buildFirstRoad,
         buildRoad,
 
-        addRss: (G, ctx) => { //ADMIN ACTION
+        addRss: (G, ctx, num) => { //ADMIN ACTION
           let playerID = 'player_' + ctx.currentPlayer;
           let cPlayer = G[playerID];
 
-          cPlayer.resources.lumber ++;
-          cPlayer.resources.brick ++;
-          cPlayer.resources.ore ++;
-          cPlayer.resources.wool ++;
-          cPlayer.resources.grain ++;
+          cPlayer.resources.lumber += num;
+          cPlayer.resources.brick += num;
+          cPlayer.resources.ore += num;
+          cPlayer.resources.wool += num;
+          cPlayer.resources.grain += num;
         },
         
         addPoint: (G, ctx) => { //ADMIN ACTION
@@ -50,15 +51,15 @@ export const Catan = {
         buyDevCard,
 
         useKnight,
+        useInvent,
+        useMonopoly,
+        useRoadBuild,
 
         /*
         trade: () => {},
         placeRobber: () => {},
         selectPlayer: () => {},
         discard: () => {},
-        
-        useInvent,
-        useMonopoly,
         */
     },
 
@@ -338,8 +339,8 @@ export const Catan = {
   }
 
   function buyDevCard (G, ctx){
-    //ESTADO: EN PROCESO
-    //TO-DO: COMPROBAR SI LA CARTA ES UN PUNTO DE VICTORIA
+    //ESTADO: TERMINADA SIN REVISAR
+    //TO-DO: 
     //FUNCIÓN: Compra una carta de desarrollo
 
     let playerID = 'player_' + ctx.currentPlayer;
@@ -360,6 +361,10 @@ export const Catan = {
     cPlayer.resources.wool--;
 
     let newCard = G.devCardsDeck.pop();
+
+    if(newCard === "victoryPoint")
+      cPlayer.points++;
+
     cPlayer.devCards.push(newCard);
   }
 
@@ -492,11 +497,24 @@ export const Catan = {
   
   function useKnight(G, ctx){
     //ESTADO: EN PROCESO
-    //TO-DO: TENER LA CARTA DE KNIGHT LMAO
+    //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME)
     //FUNCION: Usa la carta de caballero
-    
+
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+
+    if(cPlayer.devCards.length === 0){
+      alert("No tienes cartas de desarrollo");
+      return INVALID_MOVE;
+    }
+
+    if(cPlayer.devCards.indexOf("knight") === -1){
+      alert("No tienes ninguna carta de caballero");
+      return INVALID_MOVE;
+    }
+    else{
+      cPlayer.devCards.splice(cPlayer.devCards.indexOf("knight"),1);
+    }
 
     placeRobber(G, ctx);
 
@@ -542,6 +560,190 @@ export const Catan = {
 
   }
 
+  function useInvent(G, ctx){
+    //ESTADO: EN PROCESO
+    //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
+    //FUNCION: Usa la carta de desarrollo invento
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    if(cPlayer.devCards.length === 0){
+      alert("No tienes cartas de desarrollo");
+      return INVALID_MOVE;
+    }
+
+    if(cPlayer.devCards.indexOf("invent") === -1){
+      alert("No tienes ninguna carta de invento");
+      return INVALID_MOVE;
+    }
+    else{
+      cPlayer.devCards.splice(cPlayer.devCards.indexOf("invent"),1);
+    }
+
+    for(let i=0; i<2; i++){
+
+      let newRSS = prompt("Elije: ore, grain, lumber, brick, wool");
+
+      while(newRSS !== "ore" && newRSS !== "grain"  && newRSS !== "lumber" && newRSS !== "brick" && newRSS !== "wool")
+        newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
+
+      switch(newRSS){
+        case "ore":
+          cPlayer.resources.ore++;
+          break;
+        case "grain":
+          cPlayer.resources.grain++;
+          break;
+        case "wool":
+          cPlayer.resources.wool++;
+          break;
+        case "brick":
+          cPlayer.resources.brick++;
+          break;
+        case "lumber":
+          cPlayer.resources.lumber++;
+          break;
+
+        default:
+          throw new Error("Non existing rss in function useInvent");
+
+      }
+    }
+
+  }
+
+  function useMonopoly(G, ctx){
+    //ESTADO: EN PROCESO
+    //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
+    //FUNCION: Usa la carta de desarrollo monopolio
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    if(cPlayer.devCards.length === 0){
+      alert("No tienes cartas de desarrollo");
+      return INVALID_MOVE;
+    }
+
+    if(cPlayer.devCards.indexOf("monopoly") === -1){
+      alert("No tienes ninguna carta de monopolio");
+      return INVALID_MOVE;
+    }
+    else{
+      cPlayer.devCards.splice(cPlayer.devCards.indexOf("monopoly"),1);
+    }
+
+    let newRSS = prompt("Elije: ore, grain, lumber, brick, wool");
+
+    while(newRSS !== "ore" && newRSS !== "grain"  && newRSS !== "lumber" && newRSS !== "brick" && newRSS !== "wool")
+      newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
+
+    stealRssFromPlayers(playerID, G, ctx, newRSS);
+
+  }
+
+  function stealRssFromPlayers(playerID, G, ctx, newRSS){
+    //ESTADO: Terminado revisado
+    //FUNCION: Roba el recurso elegido de todos los jugadores
+    let cPlayer = G[playerID];
+
+    switch(newRSS){
+      case "ore":
+        for(let i = 0; i< ctx.numPlayers; i++){
+          let auxPlayer = 'player_' +i;
+          if(playerID !== auxPlayer){
+            while(G[auxPlayer].resources.ore > 0){
+              G[auxPlayer].resources.ore--;
+              cPlayer.resources.ore++;
+            }
+          }
+        }
+        break;
+      case "grain":
+        for(let i = 0; i< ctx.numPlayers; i++){
+          let auxPlayer = 'player_' +i;
+          if(playerID !== auxPlayer){
+            while(G[auxPlayer].resources.grain > 0){
+              G[auxPlayer].resources.grain--;
+              cPlayer.resources.grain++;
+            }
+          }
+        }
+        break;
+      case "wool":
+        for(let i = 0; i< ctx.numPlayers; i++){
+          let auxPlayer = 'player_' +i;
+          if(playerID !== auxPlayer){
+            while(G[auxPlayer].resources.wool > 0){
+              G[auxPlayer].resources.wool--;
+              cPlayer.resources.wool++;
+            }
+          }
+        }
+        break;
+      case "brick":
+        for(let i = 0; i< ctx.numPlayers; i++){
+          let auxPlayer = 'player_' +i;
+          if(playerID !== auxPlayer){
+            while(G[auxPlayer].resources.brick > 0){
+              G[auxPlayer].resources.brick--;
+              cPlayer.resources.brick++;
+            }
+          }
+        }
+        break;
+      case "lumber":
+        for(let i = 0; i< ctx.numPlayers; i++){
+          let auxPlayer = 'player_' +i;
+          if(playerID !== auxPlayer){
+            while(G[auxPlayer].resources.lumber > 0){
+              G[auxPlayer].resources.lumber--;
+              cPlayer.resources.lumber++;
+            }
+          }
+        }
+        break;
+      default:
+        throw new Error("Non existing rss in function stealRssFromPlayers");
+  }
+  }
+
+  function useRoadBuild(G, ctx){
+    //ESTADO: EN PROCESO
+    //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
+    //FUNCION: Usa la carta de desarrollo carreteras
+
+    let playerID = 'player_' + ctx.currentPlayer;
+    let cPlayer = G[playerID];
+
+    if(cPlayer.devCards.length === 0){
+      alert("No tienes cartas de desarrollo");
+      return INVALID_MOVE;
+    }
+
+    if(cPlayer.devCards.indexOf("roadsBuild") === -1){
+      alert("No tienes ninguna carta de carreteras");
+      return INVALID_MOVE;
+    }
+    else{
+      cPlayer.devCards.splice(cPlayer.devCards.indexOf("roadsBuild"),1);
+    }
+
+    for(let i=0; i<2; i++){
+      let valido = false;
+      while(!valido){
+        let newID = prompt("Introduce el id de la carretera "+i+": ");
+        newID = parseInt(newID);
+        if(newID > 71 || newID < 0)
+          alert("ID fuera de rango");
+        else{
+          if(buildFirstRoad(G,ctx,newID) !== INVALID_MOVE)
+            valido = true;
+        }
+      }
+    }
+  }
 
   //FUNCION DE ESTADO INICIAL
 
@@ -724,6 +926,8 @@ export const Catan = {
   
     return finish;
   }
+
+  
 
 /*
   function createPlayers(ctx){
