@@ -30,23 +30,38 @@ import { Local } from 'boardgame.io/multiplayer';
 import { Catan } from './Game';
 import { CatanBoard } from './Board';
 
+function setNumPlayers(){
+  let n = prompt("¿Cuantos jugadores sois?");
+  n = parseInt(n);
+
+  while(n <2 ||  n>4){
+    n = prompt("Numero de jugadores no valido, repita:");
+    n = parseInt(n);
+  }
+  return n;
+}
+
+/*
 const CatanClient = Client({
   game: Catan,
   board: CatanBoard,
   multiplayer: Local(),
+  numPlayers: setNumPlayers(),
 });
-/*
-const App = Client({
-  game: Catan,
-  board: CatanBoard,
-});
-*/
+
 const App = () => (
   <div>
     <CatanClient playerID="0" />
     <CatanClient playerID="1" />
   </div>
 );
+*/
+
+const App = Client({
+  game: Catan,
+  board: CatanBoard,
+  numPlayers: setNumPlayers(),
+});
 
 /*
 const App = () => (

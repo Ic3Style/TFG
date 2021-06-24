@@ -571,7 +571,7 @@ export const roadData = [
             "id": 71,
             "value": -1, //"id" del jugador que tenga la carretera
             "from": 53,
-            "to": 1
+            "to": 50
         }
 
 ]

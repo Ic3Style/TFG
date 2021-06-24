@@ -10,9 +10,15 @@ import { placeData } from "./placeData.js";
 //GENERAL TO_DO: PUERTOS
 //GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
 //GENERAL TO_DO: Descartar cartas
+//GENERAL TO_DO: JUGADORES VARIABLES
+
+//IMPORTANT TO_DO: ARREGLAR THROW DICE
 
 export const Catan = {
-    setup: () => createInitialState(),
+    setup: (ctx) => createInitialState(ctx),
+
+    minPlayers: 2,
+    maxPlayers: 4,
    
     turn: {
         onEnd: (G) => {
@@ -27,15 +33,18 @@ export const Catan = {
             }
             G.cells[id] = ctx.currentPlayer;
           },
-
+        
         trowDice,
-
+        
         buildFirstRoad,
         buildRoad,
 
         addRss: (G, ctx, num) => { //ADMIN ACTION
+          /*
           let playerID = 'player_' + ctx.currentPlayer;
           let cPlayer = G[playerID];
+          */
+          let cPlayer = G.players[ctx.currentPlayer];
 
           cPlayer.resources.lumber += num;
           cPlayer.resources.brick += num;
@@ -45,8 +54,11 @@ export const Catan = {
         },
         
         addPoint: (G, ctx) => { //ADMIN ACTION
+          /*
           let playerID = 'player_' + ctx.currentPlayer;
           let cPlayer = G[playerID];
+          */
+          let cPlayer = G.players[ctx.currentPlayer];
 
           cPlayer.points++;
         },
@@ -60,7 +72,7 @@ export const Catan = {
         useInvent,
         useMonopoly,
         useRoadBuild,
-
+        
         /*
         trade: () => {},
         selectPlayer: () => {},
@@ -69,14 +81,14 @@ export const Catan = {
     },
 
     //HAY QUE MODIFICARLO   
- 
+    
     endIf: (G, ctx) => {
         if (IsVictory(G, ctx)) {
           alert("GAME FINISHED");
           return { winner: ctx.currentPlayer };
         }
       },
-
+      
   };
 
   //FUNCIONES TECNICAS DE JAVASCRIPT
@@ -120,6 +132,7 @@ export const Catan = {
 
     let numberDice = diceRoll();
     G.diceValue = numberDice;
+    console.log("Ha salido el numero "+numberDice);
     
     if(numberDice === 7){
       
@@ -130,11 +143,13 @@ export const Catan = {
     else{
 
       for(let i=0; i<ctx.numPlayers; i++){
-
+        /*
         let playerID = 'player_' + i;
         let cPlayer = G[playerID];
+        */
+        let cPlayer = G.players[i];
 
-        for(let j=0; j<cPlayer.ownedTiles.length; i++){
+        for(let j=0; j<cPlayer.ownedTiles.length; j++){
           if(cPlayer.ownedTiles[j].number === numberDice && cPlayer.ownedTiles[j].robber === false){
             let rssName = cPlayer.ownedTiles[j].rss;
             switch(rssName){
@@ -142,30 +157,35 @@ export const Catan = {
                 if(G.resourcesDeck.ore > 0){
                   cPlayer.resources.ore++;
                   G.resourcesDeck.ore--;
+                  console.log("El jugador "+i+ " roba 1 de ore");
                 }
                 break;
               case "grain":
                 if(G.resourcesDeck.grain > 0){
                   cPlayer.resources.grain++;
                   G.resourcesDeck.grain--;
+                  console.log("El jugador "+i+ " roba 1 de grain");
                 }
                 break;
               case "wool":
                 if(G.resourcesDeck.wool > 0){
                   cPlayer.resources.wool++;
                   G.resourcesDeck.wool--;
+                  console.log("El jugador "+i+ " roba 1 de wool");
                 }
                 break;
               case "brick":
                 if(G.resourcesDeck.brick > 0){
                   cPlayer.resources.brick++;
                   G.resourcesDeck.brick--;
+                  console.log("El jugador "+i+ " roba 1 de brick");
                 }
                 break;
               case "lumber":
                 if(G.resourcesDeck.lumber > 0){
                   cPlayer.resources.lumber++;
                   G.resourcesDeck.lumber--;
+                  console.log("El jugador "+i+ " roba 1 de lumber");
                 }
                 break;
               default:
@@ -186,8 +206,10 @@ export const Catan = {
     //TO-DO: PUERTOS
     //FUNCION: Construye los primeros pueblos sin coste al inicio del juego
 
-    let playerID = 'player_' + ctx.currentPlayer;
-    let cPlayer = G[playerID];
+    //let playerID = 'player_' + ctx.currentPlayer;
+    //let cPlayer = G[playerID];
+
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(G.placeCells[id].type !== -1){
       alert("Ese punto ya tiene una construccion");
@@ -214,9 +236,11 @@ export const Catan = {
     //ESTADO: EN PROCESO
     //TO-DO: LIMITACION DE 5 PUEBLOS, PUERTOS
     //FUNCION: Construye un pueblo con las reglas normales del juego en la localizacion id
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.resources.lumber < 1 || cPlayer.resources.brick <1  || cPlayer.resources.grain <1 || cPlayer.resources.wool <1){
       alert("No tienes suficientes recursos");
@@ -259,9 +283,11 @@ export const Catan = {
     //ESTADO: EN PROCESO
     //TO-DO: NECESITA FUNCIONES PROPIAS PARA COMPROBAR QUE SE CONSTRUYA JUNTO AL NUEVO EDIFICIO
     //FUNCIÓN: Construye las primeras carreteras sin coste al inicio de la partida
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(G.roadCells[id].value !== -1){
       alert("La carretera ya tiene dueño");
@@ -282,9 +308,11 @@ export const Catan = {
     //ESTADO: EN PROCESO
     //TO-DO: LIMITACION DE NUMERO DE CARRETERAS
     //FUNCIÓN: Construye una carretera siguiendo las reglas del juego en la carretera id
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.resources.lumber < 1 || cPlayer.resources.brick <1){
       alert("No tienes suficientes recursos");
@@ -313,9 +341,11 @@ export const Catan = {
     //ESTADO: TERMINADO SIN REVISAR
     //TO-DO: 
     //FUNCION: Construye una ciudad encima de un pueblo con las reglas normales del juego en la localizacion id
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if( cPlayer.resources.grain <2 || cPlayer.resources.ore <3){
       alert("No tienes suficientes recursos");
@@ -362,9 +392,11 @@ export const Catan = {
     //ESTADO: TERMINADA SIN REVISAR
     //TO-DO: 
     //FUNCIÓN: Compra una carta de desarrollo
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(G.devCardsDeck.length === 0){
       alert("No quedan cartas para comprar");
@@ -447,9 +479,11 @@ export const Catan = {
     //ESTADO: EN PROGRESO
     //TO-DO: ROBAR LA CARTA, SE PODRIA PONER CON ID EN ARGUMENTO?
     //FUNCION: Mueve al ladron a la casilla que elijas y roba una carta a algun jugador coolindante
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     let finished = false;
     
@@ -523,9 +557,11 @@ export const Catan = {
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
       alert("No tienes cartas de desarrollo");
@@ -551,9 +587,11 @@ export const Catan = {
   function checkKnightLeader(G, ctx){
     //ESTADO: EN PROCESO
     //FUNCION: Comprueba si hay que cambiar la carta de mejor ejercito
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     //si la carta no ha sido reclamada por nadie
     if(G.largestArmyId === -1){
@@ -567,13 +605,17 @@ export const Catan = {
     //si la carta ya la tiene algun jugador
     else{
       if(cPlayer.largestArmy === false){
-        let playerAuxId = 'player_' + G.largestArmyId;
+        //let playerAuxId = 'player_' + G.largestArmyId;
         //si hay un nuevo lider se cambia la carta de duenho
-        if(cPlayer.usedKnights > G[playerAuxId].usedKnights){
+        if(cPlayer.usedKnights > G.players[G.largestArmyId].usedKnights){
           cPlayer.largestArmy = true;
           cPlayer.points += 2;
+          /*
           G[playerAuxId].largestArmy = false;
           G[playerAuxId].points -=2;
+          */
+          G.players[G.largestArmyId].largestArmy = false;
+          G.players[G.largestArmyId].points -=2;
           alert("La carta de mayor ejercito pasa del jugador "+G.largestArmyId +" al jugador "+ctx.currentPlayer);
           G.largestArmyId = ctx.currentPlayer;
         }       
@@ -594,9 +636,11 @@ export const Catan = {
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
       alert("No tienes cartas de desarrollo");
@@ -682,9 +726,11 @@ export const Catan = {
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
       alert("No tienes cartas de desarrollo");
@@ -704,22 +750,21 @@ export const Catan = {
     while(newRSS !== "ore" && newRSS !== "grain"  && newRSS !== "lumber" && newRSS !== "brick" && newRSS !== "wool")
       newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
 
-    stealRssFromPlayers(playerID, G, ctx, newRSS);
+    stealRssFromPlayers(cPlayer, G, ctx, newRSS);
     G.devCardUsed = true;
   }
 
-  function stealRssFromPlayers(playerID, G, ctx, newRSS){
+  function stealRssFromPlayers(cPlayer, G, ctx, newRSS){
     //ESTADO: Terminado revisado
     //FUNCION: Roba el recurso elegido de todos los jugadores
-    let cPlayer = G[playerID];
 
     switch(newRSS){
       case "ore":
         for(let i = 0; i< ctx.numPlayers; i++){
-          let auxPlayer = 'player_' +i;
-          if(playerID !== auxPlayer){
-            while(G[auxPlayer].resources.ore > 0){
-              G[auxPlayer].resources.ore--;
+          let auxPlayer = G.players[i];
+          if(cPlayer.color !== auxPlayer.color){
+            while(auxPlayer.resources.ore > 0){
+              auxPlayer.resources.ore--;
               cPlayer.resources.ore++;
             }
           }
@@ -727,10 +772,10 @@ export const Catan = {
         break;
       case "grain":
         for(let i = 0; i< ctx.numPlayers; i++){
-          let auxPlayer = 'player_' +i;
-          if(playerID !== auxPlayer){
-            while(G[auxPlayer].resources.grain > 0){
-              G[auxPlayer].resources.grain--;
+          let auxPlayer = G.players[i];
+          if(cPlayer.color !== auxPlayer.color){
+            while(auxPlayer.resources.grain > 0){
+              auxPlayer.resources.grain--;
               cPlayer.resources.grain++;
             }
           }
@@ -738,10 +783,10 @@ export const Catan = {
         break;
       case "wool":
         for(let i = 0; i< ctx.numPlayers; i++){
-          let auxPlayer = 'player_' +i;
-          if(playerID !== auxPlayer){
-            while(G[auxPlayer].resources.wool > 0){
-              G[auxPlayer].resources.wool--;
+          let auxPlayer = G.players[i];
+          if(cPlayer.color !== auxPlayer.color){
+            while(auxPlayer.resources.wool > 0){
+              auxPlayer.resources.wool--;
               cPlayer.resources.wool++;
             }
           }
@@ -749,10 +794,10 @@ export const Catan = {
         break;
       case "brick":
         for(let i = 0; i< ctx.numPlayers; i++){
-          let auxPlayer = 'player_' +i;
-          if(playerID !== auxPlayer){
-            while(G[auxPlayer].resources.brick > 0){
-              G[auxPlayer].resources.brick--;
+          let auxPlayer = G.players[i];
+          if(cPlayer.color !== auxPlayer.color){
+            while(auxPlayer.resources.brick > 0){
+              auxPlayer.resources.brick--;
               cPlayer.resources.brick++;
             }
           }
@@ -760,10 +805,10 @@ export const Catan = {
         break;
       case "lumber":
         for(let i = 0; i< ctx.numPlayers; i++){
-          let auxPlayer = 'player_' +i;
-          if(playerID !== auxPlayer){
-            while(G[auxPlayer].resources.lumber > 0){
-              G[auxPlayer].resources.lumber--;
+          let auxPlayer = G.players[i];
+          if(cPlayer.color !== auxPlayer.color){
+            while(auxPlayer.resources.lumber > 0){
+              auxPlayer.resources.lumber--;
               cPlayer.resources.lumber++;
             }
           }
@@ -783,9 +828,11 @@ export const Catan = {
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-
+    /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
+    */
+    let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
       alert("No tienes cartas de desarrollo");
@@ -819,7 +866,7 @@ export const Catan = {
 
   //FUNCION DE ESTADO INICIAL
 
-  function createInitialState(){
+  function createInitialState(ctx){
     //ESTADO: EN PROCESO
     //TO-DO: 
     //FUNCION: Crea el estado inicial de G
@@ -849,6 +896,47 @@ export const Catan = {
     cards = shuffle(cards);
 
     let firstRobber = -1;
+
+    //JUGADORES
+
+    function askName(i){
+      let newName = prompt("Escoge nombre para el jugador :"+i)
+      return newName
+    }
+
+    function getColour(i){
+      let colors = ["red", "blue", "orange", "white"];
+      return colors[i];
+    }
+
+    let getPlayers = [];
+
+    for(let i=0; i<ctx.numPlayers; i++){
+      let newPlayer = {
+        name : askName(i),
+        color : getColour(i),
+        points : 0,
+        biggestRoad : 0, //falta modificar esto
+        longestRoad : false,
+        usedKnights : 0,
+        largestArmy : false,
+        devCards : [],
+        resources : {
+            brick: 0,
+            lumber: 0,
+            ore: 0,
+            grain: 0,
+            wool: 0
+        },
+        ownedTiles : [],
+        settlements : [],
+        cities : [],
+        roads : [],
+      }
+
+      getPlayers.push(newPlayer);
+      //alert(getPlayers.length+" de longitud");
+    }
 
     //CASILLAS DE RECURSOS
     for(let i=0; i<19; i++){
@@ -910,53 +998,8 @@ export const Catan = {
         longestRoadId: -1,
         largestArmyId: -1,
         devCardUsed: false,
-     
-        player_0: {
-          name : 'player_0',
-          color : 'red',
-          points : 0,
-          biggestRoad : 0, //falta modificar esto
-          longestRoad : false,
-          usedKnights : 0,
-          largestArmy : false,
-          devCards : [],
-          resources : {
-              brick: 3,
-              lumber: 2,
-              ore: 0,
-              grain: 0,
-              wool: 0
-          },
 
-          //ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
-          ownedTiles : [],
-          settlements : [],
-          cities : [],
-          roads : [],
-        },
-        
-        player_1: {
-          name : 'player_1',
-          color : 'blue',
-          points : 0,
-          biggestRoad : 0, //falta modificar esto
-          longestRoad : false,
-          usedKnights : 0,
-          largestArmy : false,
-          devCards : [],
-          resources : {
-              brick: 0,
-              lumber: 0,
-              ore: 0,
-              grain: 0,
-              wool: 0
-          },
-          //ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
-          ownedTiles : [],
-          settlements : [],
-          cities : [],
-          roads : [],
-        },
+        players: getPlayers,
 
         resourcesDeck : {
           brick: 19,
@@ -979,7 +1022,7 @@ export const Catan = {
   };
 
   // FUNCIONES DE ORGANIZACION DEL JUEGO
-
+  
   function IsVictory(G, ctx) {
     //ESTADO: EN PROCESO
     //TO-DO: MEJORAR LA INTERFAZ DEL GANADOR (MENSAJE)
@@ -988,8 +1031,11 @@ export const Catan = {
     let finish = false;
   
     for(let i=0; i< ctx.numPlayers; i++){
+      /*
       let playerID = 'player_' + i;
       let cPlayer = G[playerID];
+      */
+      let cPlayer = G.players[ctx.currentPlayer];
   
       if (cPlayer.points >= 10){
         finish = true;
@@ -999,23 +1045,6 @@ export const Catan = {
   
     return finish;
   }
-
-  
-
-/*
-  function createPlayers(ctx){
-
-    let players = [];
-    for (let i=0; i< ctx.numPlayers; i++){
-      let name = `player`+i;
-      let player = new CatanPlayer(name, null); 
-      players.push(player);
-    }
-
-    return players;
-  }
-*/
-
 
 
 /*

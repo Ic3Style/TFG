@@ -189,3 +189,53 @@
       intersectionPlaces.push(cell);
     }
     */
+
+
+  /*
+player_0: {
+  name : 'player_0',
+  color : 'red',
+  points : 0,
+  biggestRoad : 0, //falta modificar esto
+  longestRoad : false,
+  usedKnights : 0,
+  largestArmy : false,
+  devCards : [],
+  resources : {
+      brick: 3,
+      lumber: 2,
+      ore: 0,
+      grain: 0,
+      wool: 0
+  },
+
+  //ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
+  ownedTiles : [],
+  settlements : [],
+  cities : [],
+  roads : [],
+},
+
+player_1: {
+  name : 'player_1',
+  color : 'blue',
+  points : 0,
+  biggestRoad : 0, //falta modificar esto
+  longestRoad : false,
+  usedKnights : 0,
+  largestArmy : false,
+  devCards : [],
+  resources : {
+      brick: 0,
+      lumber: 0,
+      ore: 0,
+      grain: 0,
+      wool: 0
+  },
+  //ownedTiles : new Array(19 + 1).join('0').split('').map(parseFloat),
+  ownedTiles : [],
+  settlements : [],
+  cities : [],
+  roads : [],
+},
+*/
