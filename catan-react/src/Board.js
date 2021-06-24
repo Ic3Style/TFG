@@ -15,7 +15,7 @@ export class CatanBoard extends React.Component {
         return array;
       }
         ///he quitado el clickHandler
-              // Make a list with the right number of each tile
+        // Make a list with the right number of each tile
         var locations = ["Hills", "Hills", "Hills",
         "Forest", "Forest", "Forest", "Forest",
         "Mountains", "Mountains", "Mountains",
@@ -37,8 +37,10 @@ export class CatanBoard extends React.Component {
           lineHeight: '50px',
           textAlign: 'center',
         };
-    
+
+        //let uniqueID = 0;
         let tbody = [];
+        
         for (let i = 0; i < 5; i++) {
           let cells = [];
           for (let j = 0; j < 5; j++) {
@@ -51,7 +53,45 @@ export class CatanBoard extends React.Component {
           }
           tbody.push(<tr key={i}>{cells}</tr>);
         }
-    
+        /*
+        for (let i = 0; i < 5; i++) {
+          let cells = [];
+          if(i===0 || i===4)
+            for (let j = 0; j < 3; j++) {
+              const id = uniqueID;
+              uniqueID++;
+              cells.push( //he quitado el onclick
+                <td style={cellStyle} key={id}> 
+                  {this.props.G.terrainCells[id]}
+                </td>
+              );
+            }
+          else if(i===1 || i===3)
+            for (let j = 0; j < 4; j++) {
+              const id = uniqueID;
+              uniqueID++;
+              cells.push( //he quitado el onclick
+                <td style={cellStyle} key={id}> 
+                  {this.props.G.terrainCells[id]}
+                </td>
+              );
+            }
+          else{
+            for (let j = 0; j < 5; j++) {
+              const id = uniqueID;
+              uniqueID++;
+              cells.push( //he quitado el onclick
+                <td style={cellStyle} key={id}> 
+                  {this.props.G.terrainCells[id]}
+                </td>
+              );
+            }
+          }
+
+          tbody.push(<tr key={i}>{cells}</tr>);
+        }
+        */
+
         return (
           <div>
             <table id="board">

@@ -35,11 +35,18 @@ const CatanClient = Client({
   board: CatanBoard,
   multiplayer: Local(),
 });
-
+/*
 const App = Client({
   game: Catan,
   board: CatanBoard,
 });
+*/
+const App = () => (
+  <div>
+    <CatanClient playerID="0" />
+    <CatanClient playerID="1" />
+  </div>
+);
 
 /*
 const App = () => (
