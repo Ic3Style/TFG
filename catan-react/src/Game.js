@@ -6,14 +6,20 @@ import { placeData } from "./placeData.js";
 
 //GENERAL TO_DO: Exportar los datos de cada turno a un txt.
 //GENERAL TO_DO: En caso de que no queden sitios para construir para un jugador
+//GENERAL TO_DO: Sistema de comercio
+//GENERAL TO_DO: PUERTOS
+//GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
+//GENERAL TO_DO: Descartar cartas
 
 export const Catan = {
-    setup: (ctx) => createInitialState(),
- /*   
+    setup: () => createInitialState(),
+   
     turn: {
-        moveLimit: 5, //realmente no tiene limite
+        onEnd: (G) => {
+          G.devCardUsed = false;
+        }
       },
-*/
+
     moves: {
         clickCell: (G, ctx, id) => { //este hay que borrarlo
             if (G.cells[id] !== null) {
@@ -57,7 +63,6 @@ export const Catan = {
 
         /*
         trade: () => {},
-        placeRobber: () => {},
         selectPlayer: () => {},
         discard: () => {},
         */
@@ -134,19 +139,34 @@ export const Catan = {
             let rssName = cPlayer.ownedTiles[j].rss;
             switch(rssName){
               case "ore":
-                cPlayer.resources.ore++;
+                if(G.resourcesDeck.ore > 0){
+                  cPlayer.resources.ore++;
+                  G.resourcesDeck.ore--;
+                }
                 break;
               case "grain":
-                cPlayer.resources.grain++;
+                if(G.resourcesDeck.grain > 0){
+                  cPlayer.resources.grain++;
+                  G.resourcesDeck.grain--;
+                }
                 break;
               case "wool":
-                cPlayer.resources.wool++;
+                if(G.resourcesDeck.wool > 0){
+                  cPlayer.resources.wool++;
+                  G.resourcesDeck.wool--;
+                }
                 break;
               case "brick":
-                cPlayer.resources.brick++;
+                if(G.resourcesDeck.brick > 0){
+                  cPlayer.resources.brick++;
+                  G.resourcesDeck.brick--;
+                }
                 break;
               case "lumber":
-                cPlayer.resources.lumber++;
+                if(G.resourcesDeck.lumber > 0){
+                  cPlayer.resources.lumber++;
+                  G.resourcesDeck.lumber--;
+                }
                 break;
               default:
                 throw new Error("Non existing rss in function throwDice");
@@ -443,7 +463,6 @@ export const Catan = {
         newID = parseInt(newID);
       }
       
-
       if(newID !== G.robberPos){
 
         finished = true;
@@ -500,6 +519,11 @@ export const Catan = {
     //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME)
     //FUNCION: Usa la carta de caballero
 
+    if(G.devCardUsed === true){
+      alert("Solo se puede usar una carta de desarrollo por turno");
+      return INVALID_MOVE;
+    }
+
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
 
@@ -520,6 +544,7 @@ export const Catan = {
 
     cPlayer.usedKnights++;
     checkKnightLeader(G, ctx);
+    G.devCardUsed = true;
 
   }
 
@@ -565,6 +590,11 @@ export const Catan = {
     //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
     //FUNCION: Usa la carta de desarrollo invento
 
+    if(G.devCardUsed === true){
+      alert("Solo se puede usar una carta de desarrollo por turno");
+      return INVALID_MOVE;
+    }
+
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
 
@@ -590,33 +620,68 @@ export const Catan = {
 
       switch(newRSS){
         case "ore":
-          cPlayer.resources.ore++;
+          if(G.resourcesDeck.ore > 0){
+            cPlayer.resources.ore++;
+            G.resourcesDeck.ore--;
+          }
+          else{
+            alert("No queda mineral en el deck, por lo que no robas");
+          }
           break;
         case "grain":
-          cPlayer.resources.grain++;
+          if(G.resourcesDeck.grain > 0){
+            cPlayer.resources.grain++;
+            G.resourcesDeck.grain--;
+          }
+          else{
+            alert("No queda grano en el deck, por lo que no robas");
+          }
           break;
         case "wool":
-          cPlayer.resources.wool++;
+          if(G.resourcesDeck.wool > 0){
+            cPlayer.resources.wool++;
+            G.resourcesDeck.wool--;
+          }
+          else{
+            alert("No queda lana en el deck, por lo que no robas");
+          }
           break;
         case "brick":
-          cPlayer.resources.brick++;
+          if(G.resourcesDeck.brick > 0){
+            cPlayer.resources.brick++;
+            G.resourcesDeck.brick--;
+          }
+          else{
+            alert("No queda ladrillo en el deck, por lo que no robas");
+          }
           break;
         case "lumber":
-          cPlayer.resources.lumber++;
+          if(G.resourcesDeck.lumber > 0){
+            cPlayer.resources.lumber++;
+            G.resourcesDeck.lumber--;
+          }
+          else{
+            alert("No queda madera en el deck, por lo que no robas");
+          }
           break;
-
         default:
           throw new Error("Non existing rss in function useInvent");
 
       }
     }
 
+    G.devCardUsed = true;
   }
 
   function useMonopoly(G, ctx){
     //ESTADO: EN PROCESO
     //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
     //FUNCION: Usa la carta de desarrollo monopolio
+
+    if(G.devCardUsed === true){
+      alert("Solo se puede usar una carta de desarrollo por turno");
+      return INVALID_MOVE;
+    }
 
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
@@ -640,7 +705,7 @@ export const Catan = {
       newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
 
     stealRssFromPlayers(playerID, G, ctx, newRSS);
-
+    G.devCardUsed = true;
   }
 
   function stealRssFromPlayers(playerID, G, ctx, newRSS){
@@ -714,6 +779,11 @@ export const Catan = {
     //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
     //FUNCION: Usa la carta de desarrollo carreteras
 
+    if(G.devCardUsed === true){
+      alert("Solo se puede usar una carta de desarrollo por turno");
+      return INVALID_MOVE;
+    }
+
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
 
@@ -743,6 +813,8 @@ export const Catan = {
         }
       }
     }
+
+    G.devCardUsed = true;
   }
 
   //FUNCION DE ESTADO INICIAL
@@ -837,6 +909,7 @@ export const Catan = {
         robberPos: firstRobber,
         longestRoadId: -1,
         largestArmyId: -1,
+        devCardUsed: false,
      
         player_0: {
           name : 'player_0',
