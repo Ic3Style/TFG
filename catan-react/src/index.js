@@ -17,7 +17,7 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-/*
+/*PARA PONER EL MODO MULTIJUGADOR SERVER, NO FUNCIONA
 
 import React from "react";
 import { render } from "react-dom";

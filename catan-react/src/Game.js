@@ -10,6 +10,7 @@ import { placeData } from "./placeData.js";
 //GENERAL TO_DO: PUERTOS
 //GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
 //GENERAL TO_DO: PHASES AND STAGES
+//GENERAL TO_DO: CARTAS DE INICIO
 
 export const Catan = {
     setup: (ctx) => createInitialState(ctx),
@@ -23,6 +24,72 @@ export const Catan = {
         }
       },
 
+    phases: {
+        firstBuilds:{
+          moves: {buildFirstSettlement, buildFirstRoad},
+          start: true,
+          next: 'play',
+          endIf: (G, ctx) => { //ACABA CUANDO TODOS LOS JUGADORES TIENEN 2 POBLADOS Y 2 CARRETERAS INICIALES
+            let end = true;
+            for(let i = 0; i<ctx.numPlayers; i++){
+              let cPlayer = G.players[i];
+              if(cPlayer.settlements.length !== 2 || cPlayer.roads.length !== 2)
+                end = false;
+            }
+            if(end){
+              alert("Fase de preparacion terminada, empieza el juego!");
+            }
+            return end;
+          },
+
+          turn: {
+            moveLimit: 2,
+          }
+        },
+
+        play:{
+          moves: {
+            trowDice,
+            buildRoad,
+            buildSettlement,
+            buildCity,
+            buyDevCard,
+            useKnight,
+            useInvent,
+            useMonopoly,
+            useRoadBuild,
+            //trade,
+
+            addRss: (G, ctx, num) => { //ADMIN ACTION
+
+              let cPlayer = G.players[ctx.currentPlayer];
+    
+              cPlayer.resources.lumber += num;
+              cPlayer.resources.brick += num;
+              cPlayer.resources.ore += num;
+              cPlayer.resources.wool += num;
+              cPlayer.resources.grain += num;
+            },
+            addPoint: (G, ctx) => { //ADMIN ACTION
+
+              let cPlayer = G.players[ctx.currentPlayer];
+    
+              cPlayer.points++;
+            },
+          },
+
+
+        },
+    },
+
+    endIf: (G, ctx) => {
+      if (IsVictory(G, ctx)) {
+        alert("GAME FINISHED");
+        return { winner: ctx.currentPlayer };
+      }
+    },
+
+    /*
     moves: {
         clickCell: (G, ctx, id) => { //este hay que borrarlo
             if (G.cells[id] !== null) {
@@ -37,12 +104,7 @@ export const Catan = {
         buildRoad,
 
         addRss: (G, ctx, num) => { //ADMIN ACTION
-          /*
-          let playerID = 'player_' + ctx.currentPlayer;
-          let cPlayer = G[playerID];
-          */
           let cPlayer = G.players[ctx.currentPlayer];
-
           cPlayer.resources.lumber += num;
           cPlayer.resources.brick += num;
           cPlayer.resources.ore += num;
@@ -51,12 +113,7 @@ export const Catan = {
         },
         
         addPoint: (G, ctx) => { //ADMIN ACTION
-          /*
-          let playerID = 'player_' + ctx.currentPlayer;
-          let cPlayer = G[playerID];
-          */
           let cPlayer = G.players[ctx.currentPlayer];
-
           cPlayer.points++;
         },
         
@@ -70,21 +127,18 @@ export const Catan = {
         useMonopoly,
         useRoadBuild,
         
-        /*
-        trade: () => {},
-        selectPlayer: () => {},
-        discard: () => {},
-        */
+
     },
 
     //HAY QUE MODIFICARLO   
     
     endIf: (G, ctx) => {
-        if (IsVictory(G, ctx)) {
-          alert("GAME FINISHED");
-          return { winner: ctx.currentPlayer };
-        }
-      },
+      if (IsVictory(G, ctx)) {
+        alert("GAME FINISHED");
+        return { winner: ctx.currentPlayer };
+      }
+    },
+    */
       
   };
 
@@ -177,7 +231,6 @@ export const Catan = {
                 }
                 else alert("No tienes de ese recurso!");            
                 break;
-              case "brick":
               case "lumber":
                 if(cPlayer.resources.lumber > 0){
                   cPlayer.resources.lumber--;
@@ -203,6 +256,56 @@ export const Catan = {
         }
       }
     }
+  }
+
+  function getFirstRSS(G, ctx){
+    //ESTADO: TERMINADA SIN REVISAR
+    //FUNCION: Cada jugador recibe los recursos correspondientes al segundo poblado inicial
+
+
+    let cPlayer = G.players[ctx.currentPlayer];
+    let lastBuild = cPlayer.settlements[cPlayer.settlements.length-1];
+
+    let str = JSON.stringify(lastBuild, null, 4); // (Optional) beautiful indented output.
+    console.log(str); 
+
+    for(let j=0; j<lastBuild.tiles.length; j++){
+      let tileID = lastBuild.tiles[j];
+      let newRSS = G.terrainCells[tileID].rss;
+
+      alert("NewRSS: "+newRSS);
+
+      switch(newRSS){
+        case "ore":
+          cPlayer.resources.ore++;
+          G.resourcesDeck.ore--;
+          console.log("El jugador "+cPlayer.name+ " roba 1 de ore");
+          break;
+        case "grain":
+          cPlayer.resources.grain++;
+          G.resourcesDeck.grain--;
+          console.log("El jugador "+cPlayer.name+ " roba 1 de grain");
+          break;
+        case "wool":
+          cPlayer.resources.wool++;
+          G.resourcesDeck.wool--;
+          console.log("El jugador "+cPlayer.name+ " roba 1 de wool");
+          break;
+        case "brick":
+          cPlayer.resources.brick++;
+          G.resourcesDeck.brick--;
+          console.log("El jugador "+cPlayer.name+ " roba 1 de brick");
+          break;
+        case "lumber":
+          cPlayer.resources.lumber++;
+          G.resourcesDeck.lumber--;
+          console.log("El jugador "+cPlayer.name+ " roba 1 de lumber");
+          break;
+        default:
+          throw new Error("Non existing rss in function getFirstRSS");
+      }
+    }
+    
   }
 
   function trowDice (G, ctx){
@@ -291,6 +394,11 @@ export const Catan = {
 
     let cPlayer = G.players[ctx.currentPlayer];
 
+    if(cPlayer.settlements.length > cPlayer.roads.length){
+      alert("Primero debes construir una carretera");
+      return INVALID_MOVE;
+    }
+
     if(G.placeCells[id].type !== -1){
       alert("Ese punto ya tiene una construccion");
       return INVALID_MOVE;
@@ -309,7 +417,10 @@ export const Catan = {
       let id_t = G.placeCells[id].tiles[i];
       cPlayer.ownedTiles.push(G.terrainCells[id_t]);
     }
-    cPlayer.points++;    
+    cPlayer.points++; 
+    
+    if(cPlayer.settlements.length === 2)
+      getFirstRSS(G,ctx);
   }
 
   function buildSettlement (G, ctx, id){
@@ -364,6 +475,25 @@ export const Catan = {
     cPlayer.points++;    
   }
 
+  function checkFirstRoadBuilding(G,cPlayer,id){
+    //ESTADO: TERMINADA SIN REVISAR
+    //FUNCIÓN: Comprueba que la carretera inicial se construya correctamente junto al poblado correspondiente
+
+    if(cPlayer.settlements.length <= cPlayer.roads.length){
+      alert("Primero debes construir un poblado");
+      return false;
+    }
+
+    let lastBuild = cPlayer.settlements[cPlayer.settlements.length-1];
+
+    if(G.roadCells[id].to !== lastBuild.id && G.roadCells[id].from !== lastBuild.id){
+      alert("Debes construir junto al ultimo edificio construido");
+      return false;
+    }
+
+    return true;
+  }
+
   function buildFirstRoad (G, ctx, id){
     //ESTADO: EN PROCESO
     //TO-DO: NECESITA FUNCIONES PROPIAS PARA COMPROBAR QUE SE CONSTRUYA JUNTO AL NUEVO EDIFICIO
@@ -373,6 +503,10 @@ export const Catan = {
     let cPlayer = G[playerID];
     */
     let cPlayer = G.players[ctx.currentPlayer];
+
+    if(!checkFirstRoadBuilding(G,cPlayer,id)){
+      return INVALID_MOVE;
+    }
 
     if(G.roadCells[id].value !== -1){
       alert("La carretera ya tiene dueño");
@@ -1126,6 +1260,7 @@ export const Catan = {
       let playerID = 'player_' + i;
       let cPlayer = G[playerID];
       */
+      //alert(ctx.currentPlayer);
       let cPlayer = G.players[ctx.currentPlayer];
   
       if (cPlayer.points >= 10){
@@ -1138,24 +1273,3 @@ export const Catan = {
   }
 
 
-/*
-    //HAY QUE MODIFICAR ESTAS FUNCIONES
-  function IsVictory(cells) {
-    const positions = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
-      [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]
-    ];
-  
-    const isRowComplete = row => {
-      const symbols = row.map(i => cells[i]);
-      return symbols.every(i => i !== null && i === symbols[0]);
-    };
-  
-    return positions.map(isRowComplete).some(i => i === true);
-  }
-  
-  // Return true if all `cells` are occupied.
-  function IsDraw(cells) {
-    return cells.filter(c => c === null).length === 0;
-  }
- */ 
