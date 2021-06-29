@@ -1,3 +1,4 @@
+//TIENE LOS DATOS DE TODAS LAS INTERSECCIONES
 export const placeData = [
 
     {

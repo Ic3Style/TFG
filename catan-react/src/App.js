@@ -60,7 +60,8 @@ const App = () => (
 const App = Client({
   game: Catan,
   board: CatanBoard,
-  numPlayers: setNumPlayers(),
+  //numPlayers: setNumPlayers(), //DESCOMENTAR
+  numPlayers: 2,
 });
 
 /*

@@ -5,14 +5,11 @@ import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
 
 //GENERAL TO_DO: Exportar los datos de cada turno a un txt.
-//GENERAL TO_DO: En caso de que no queden sitios para construir para un jugador
+//OPTIONAL TO_DO: En caso de que no queden sitios para construir para un jugador
 //GENERAL TO_DO: Sistema de comercio
 //GENERAL TO_DO: PUERTOS
 //GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
-//GENERAL TO_DO: Descartar cartas
-//GENERAL TO_DO: JUGADORES VARIABLES
-
-//IMPORTANT TO_DO: ARREGLAR THROW DICE
+//GENERAL TO_DO: PHASES AND STAGES
 
 export const Catan = {
     setup: (ctx) => createInitialState(ctx),
@@ -125,6 +122,89 @@ export const Catan = {
     return Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
   };
 
+  function countCards(cPlayer){
+    //ESTADO: TERMINADA SIN REVISAR
+    //FUNCION: Devuelve el numero de cartas que tiene un jugador (sin contar dev)
+
+    var sumTotal = 0;
+    for(var stat of Object.values(cPlayer['resources'])){
+      sumTotal = sumTotal+stat
+    }
+
+    return sumTotal;
+  }
+
+  function checkDiscard(G,ctx){
+    //ESTADO: TERMINADA SIN REVISAR
+    //FUNCION: Cada jugador se descarta de la mitad de sus cartas si tiene mas de 7
+
+    for(let i=0; i<ctx.numPlayers; i++){
+      let cPlayer = G.players[i];
+
+      let cPlayerCards = countCards(cPlayer);
+
+      if(cPlayerCards > 7){
+        alert("El jugador "+cPlayer.name+" tiene "+cPlayerCards+" cartas, debe descartarse");
+        console.log("El jugador "+cPlayer.name+" tiene mas de 7 cartas, debe descartarse");
+
+        let cardsLeft = Math.floor(cPlayerCards/2); //cartas que aun tiene que descartar
+        while(cardsLeft > 0){
+          let valid = false;
+          while(!valid){
+            let rssName = prompt("Te quedan "+cardsLeft+ " por elegir, elige (ore, lumber, grain, brick, wool):");
+            switch(rssName){
+              case "ore":
+                if(cPlayer.resources.ore > 0){
+                  cPlayer.resources.ore--;
+                  console.log("El jugador "+cPlayer.name+ " descarta 1 de ore");
+                  valid = true;
+                }
+                else alert("No tienes de ese recurso!");        
+                break;
+              case "grain":
+                if(cPlayer.resources.grain > 0){
+                  cPlayer.resources.grain--;
+                  console.log("El jugador "+cPlayer.name+ " descarta 1 de grain");
+                  valid = true;
+                }
+                else alert("No tienes de ese recurso!");            
+                break;
+              case "wool":
+                if(cPlayer.resources.wool > 0){
+                  cPlayer.resources.wool--;
+                  console.log("El jugador "+cPlayer.name+ " descarta 1 de wool");
+                  valid = true;
+                }
+                else alert("No tienes de ese recurso!");            
+                break;
+              case "brick":
+              case "lumber":
+                if(cPlayer.resources.lumber > 0){
+                  cPlayer.resources.lumber--;
+                  console.log("El jugador "+cPlayer.name+ " descarta 1 de lumber");
+                  valid = true;
+                }
+                else alert("No tienes de ese recurso!");            
+                break;
+              case "brick":
+                if(cPlayer.resources.brick > 0){
+                  cPlayer.resources.brick--;
+                  console.log("El jugador "+cPlayer.name+ " descarta 1 de brick");
+                  valid = true;
+                }
+                else alert("No tienes de ese recurso!");            
+                break;
+              default:
+                alert("No existe ese recurso");
+                break;
+            }
+          }
+          cardsLeft--;
+        }
+      }
+    }
+  }
+
   function trowDice (G, ctx){
     //ESTADO: EN PROGRESO
     //TO-DO: DESCARTAR 
@@ -136,7 +216,7 @@ export const Catan = {
     
     if(numberDice === 7){
       
-      //checkDiscard();
+      checkDiscard(G, ctx);
       placeRobber(G, ctx);
 
     }
@@ -234,13 +314,18 @@ export const Catan = {
 
   function buildSettlement (G, ctx, id){
     //ESTADO: EN PROCESO
-    //TO-DO: LIMITACION DE 5 PUEBLOS, PUERTOS
+    //TO-DO: PUERTOS
     //FUNCION: Construye un pueblo con las reglas normales del juego en la localizacion id
     /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
     */
     let cPlayer = G.players[ctx.currentPlayer];
+
+    if(cPlayer.settlements.length === 5){
+      alert("Ya tienes el maximo de pueblos");
+      return INVALID_MOVE;
+    }
 
     if(cPlayer.resources.lumber < 1 || cPlayer.resources.brick <1  || cPlayer.resources.grain <1 || cPlayer.resources.wool <1){
       alert("No tienes suficientes recursos");
@@ -306,13 +391,18 @@ export const Catan = {
 
   function buildRoad (G, ctx, id){
     //ESTADO: EN PROCESO
-    //TO-DO: LIMITACION DE NUMERO DE CARRETERAS
+    //TO-DO: 
     //FUNCIÓN: Construye una carretera siguiendo las reglas del juego en la carretera id
     /*
     let playerID = 'player_' + ctx.currentPlayer;
     let cPlayer = G[playerID];
     */
     let cPlayer = G.players[ctx.currentPlayer];
+
+    if(cPlayer.roads.length >= 15){
+      alert("Maximo de carreteras construido");
+      return INVALID_MOVE;
+    }
 
     if(cPlayer.resources.lumber < 1 || cPlayer.resources.brick <1){
       alert("No tienes suficientes recursos");
@@ -913,7 +1003,8 @@ export const Catan = {
 
     for(let i=0; i<ctx.numPlayers; i++){
       let newPlayer = {
-        name : askName(i),
+        //name : askName(i),
+        name : "player_"+i,
         color : getColour(i),
         points : 0,
         biggestRoad : 0, //falta modificar esto

@@ -1,4 +1,5 @@
 //location card class
+//NO SE USA DE MOMENTO, NO SE SI ES NECESARIA
 export class Location {
     //constructor
     constructor(id, locationName, value, x, y) {
