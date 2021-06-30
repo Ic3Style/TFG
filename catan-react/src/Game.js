@@ -59,7 +59,7 @@ export const Catan = {
             useInvent,
             useMonopoly,
             useRoadBuild,
-            //trade,
+            tradeBank,
 
             addRss: (G, ctx, num) => { //ADMIN ACTION
 
@@ -820,7 +820,171 @@ export const Catan = {
     }
 
     return rss;
+  }
+
+  function getRSSFromBank(G,cPlayer){
+    //ESTADO: TERMINADO SIN REVISAR
+    //FUNCIÓN: Coge una carta de recursos del deck que el jugador eliga, returna true si se ha completado la operacion, false si no
+
+    let res = true;
+
+    let newRSS = prompt("¿Que recurso quieres a cambio? (ore, lumber, brick, wool, grain): ");
+
+    while(newRSS !== "ore" && newRSS !== "grain"  && newRSS !== "lumber" && newRSS !== "brick" && newRSS !== "wool")
+      newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
+
+    switch(newRSS){
+      case "ore":
+        if(G.resourcesDeck.ore > 0){
+          cPlayer.resources.ore++;
+          console.log("El jugador "+cPlayer.name+" recibe a cambio 1 de ore del banco");
+          G.resourcesDeck.ore--;
+        }
+        else{
+          alert("No queda mineral en el deck");
+          res = false;
+        }
+        break;
+      case "grain":
+        if(G.resourcesDeck.grain > 0){
+          cPlayer.resources.grain++;
+          console.log("El jugador "+cPlayer.name+" recibe a cambio 1 de grain del banco");
+          G.resourcesDeck.grain--;
+        }
+        else{
+          alert("No queda grano en el deck");
+          res = false;
+        }
+        break;
+      case "wool":
+        if(G.resourcesDeck.wool > 0){
+          cPlayer.resources.wool++;
+          console.log("El jugador "+cPlayer.name+" recibe a cambio 1 de wool del banco");
+          G.resourcesDeck.wool--;
+        }
+        else{
+          alert("No queda lana en el deck");
+          res = false;
+        }
+        break;
+      case "brick":
+        if(G.resourcesDeck.brick > 0){
+          cPlayer.resources.brick++;
+          console.log("El jugador "+cPlayer.name+" recibe a cambio 1 de brick del banco");
+          G.resourcesDeck.brick--;
+        }
+        else{
+          alert("No queda ladrillo en el deck");
+          res = false;
+        }
+        break;
+      case "lumber":
+        if(G.resourcesDeck.lumber > 0){
+          cPlayer.resources.lumber++;
+          console.log("El jugador "+cPlayer.name+" recibe a cambio 1 de lumber del banco");
+          G.resourcesDeck.lumber--;
+        }
+        else{
+          alert("No queda madera en el deck");
+          res = false;
+        }
+        break;
+      default:
+        throw new Error("Non existing rss in function getRSSFromBank");
     }
+
+    return res;
+  }
+
+  function tradeBank(G,ctx){
+    //ESTADO: EN PROCESO
+    //TO-DO: PUERTOS
+    //FUNCIÓN: Comercia con el banco
+
+    let cPlayer = G.players[ctx.currentPlayer];
+
+    let rss = prompt("¿Que recurso quieres dar al banco? (ore, lumber, brick, wool, grain, none");
+
+    switch(rss){
+      case "ore":
+        if(cPlayer.resources.ore < 4){
+          alert("No tienes suficiente ore para comerciar!");
+        }
+        else{
+          console.log("El jugador "+cPlayer.name+ " entrega 4 de ore al banco");
+          cPlayer.resources.ore -= 4;
+          let done = getRSSFromBank(G,cPlayer);
+          if(!done){
+            console.log("El jugador "+cPlayer.name+ " recupera 4 de ore del banco debido a falta de recursos disponibles");
+            cPlayer.resources.ore += 4;
+          }
+        }
+        break;
+      case "wool":
+        if(cPlayer.resources.wool < 4){
+          alert("No tienes suficiente wool para comerciar!");
+        }
+        else{
+          console.log("El jugador "+cPlayer.name+ " entrega 4 de wool al banco");
+          cPlayer.resources.wool -= 4;
+          let done = getRSSFromBank(G,cPlayer);
+          if(!done){
+            console.log("El jugador "+cPlayer.name+ " recupera 4 de wool del banco debido a falta de recursos disponibles");
+            cPlayer.resources.wool += 4;
+          }
+        }
+        break;
+      case "brick":
+        if(cPlayer.resources.brick < 4){
+          alert("No tienes suficiente brick para comerciar!");
+        }
+        else{
+          console.log("El jugador "+cPlayer.name+ " entrega 4 de brick al banco");
+          cPlayer.resources.brick -= 4;
+          let done = getRSSFromBank(G,cPlayer);
+          if(!done){
+            console.log("El jugador "+cPlayer.name+ " recupera 4 de brick del banco debido a falta de recursos disponibles");
+            cPlayer.resources.brick += 4;
+          }
+        }
+        break;
+      case "grain":
+        if(cPlayer.resources.grain < 4){
+          alert("No tienes suficiente grain para comerciar!");
+        }
+        else{
+          console.log("El jugador "+cPlayer.name+ " entrega 4 de grain al banco");
+          cPlayer.resources.grain -= 4;
+          let done = getRSSFromBank(G,cPlayer);
+          if(!done){
+            console.log("El jugador "+cPlayer.name+ " recupera 4 de grain del banco debido a falta de recursos disponibles");
+            cPlayer.resources.grain += 4;
+          }
+        }
+        break;
+      case "lumber":
+        if(cPlayer.resources.lumber < 4){
+          alert("No tienes suficiente lumber para comerciar!");
+        }
+        else{
+          console.log("El jugador "+cPlayer.name+ " entrega 4 de lumber al banco");
+          cPlayer.resources.lumber -= 4;
+          let done = getRSSFromBank(G,cPlayer);
+          if(!done){
+            console.log("El jugador "+cPlayer.name+ " recupera 4 de lumber del banco debido a falta de recursos disponibles");
+            cPlayer.resources.lumber += 4;
+          }
+        }
+        break;
+      case "none":
+        alert("Espabila")
+        break;
+      default:
+        throw new Error("Non existing rss in function getFirstRSS");
+    }
+
+    
+  }
 
 
   //FUNCIONES DE CARTAS DE DESARROLLO
