@@ -62,7 +62,7 @@ const App = Client({
   board: CatanBoard,
   debug: true,
   //numPlayers: setNumPlayers(), //DESCOMENTAR
-  numPlayers: 2,
+  numPlayers: 3,
 });
 
 /*

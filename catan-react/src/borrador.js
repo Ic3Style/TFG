@@ -262,3 +262,56 @@ player_1: {
     return cells.filter(c => c === null).length === 0;
   }
  */ 
+
+
+  //MAIN SIN FASES
+      /*
+    moves: {
+        clickCell: (G, ctx, id) => { //este hay que borrarlo
+            if (G.cells[id] !== null) {
+              return INVALID_MOVE;
+            }
+            G.cells[id] = ctx.currentPlayer;
+          },
+        
+        trowDice,
+        
+        buildFirstRoad,
+        buildRoad,
+
+        addRss: (G, ctx, num) => { //ADMIN ACTION
+          let cPlayer = G.players[ctx.currentPlayer];
+          cPlayer.resources.lumber += num;
+          cPlayer.resources.brick += num;
+          cPlayer.resources.ore += num;
+          cPlayer.resources.wool += num;
+          cPlayer.resources.grain += num;
+        },
+        
+        addPoint: (G, ctx) => { //ADMIN ACTION
+          let cPlayer = G.players[ctx.currentPlayer];
+          cPlayer.points++;
+        },
+        
+        buildFirstSettlement,
+        buildSettlement,
+        buildCity,
+        buyDevCard,
+
+        useKnight,
+        useInvent,
+        useMonopoly,
+        useRoadBuild,
+        
+
+    },
+
+    //HAY QUE MODIFICARLO   
+    
+    endIf: (G, ctx) => {
+      if (IsVictory(G, ctx)) {
+        alert("GAME FINISHED");
+        return { winner: ctx.currentPlayer };
+      }
+    },
+    */

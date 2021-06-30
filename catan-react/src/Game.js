@@ -9,8 +9,9 @@ import { placeData } from "./placeData.js";
 //GENERAL TO_DO: Sistema de comercio
 //GENERAL TO_DO: PUERTOS
 //GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
-//GENERAL TO_DO: PHASES AND STAGES
-//GENERAL TO_DO: CARTAS DE INICIO
+//GENERAL TO_DO: STAGES
+//OPTIONAL TO_DO: TIRAR DADOS PARA VER QUIEN EMPIEZA
+
 
 export const Catan = {
     setup: (ctx) => createInitialState(ctx),
@@ -88,57 +89,6 @@ export const Catan = {
         return { winner: ctx.currentPlayer };
       }
     },
-
-    /*
-    moves: {
-        clickCell: (G, ctx, id) => { //este hay que borrarlo
-            if (G.cells[id] !== null) {
-              return INVALID_MOVE;
-            }
-            G.cells[id] = ctx.currentPlayer;
-          },
-        
-        trowDice,
-        
-        buildFirstRoad,
-        buildRoad,
-
-        addRss: (G, ctx, num) => { //ADMIN ACTION
-          let cPlayer = G.players[ctx.currentPlayer];
-          cPlayer.resources.lumber += num;
-          cPlayer.resources.brick += num;
-          cPlayer.resources.ore += num;
-          cPlayer.resources.wool += num;
-          cPlayer.resources.grain += num;
-        },
-        
-        addPoint: (G, ctx) => { //ADMIN ACTION
-          let cPlayer = G.players[ctx.currentPlayer];
-          cPlayer.points++;
-        },
-        
-        buildFirstSettlement,
-        buildSettlement,
-        buildCity,
-        buyDevCard,
-
-        useKnight,
-        useInvent,
-        useMonopoly,
-        useRoadBuild,
-        
-
-    },
-
-    //HAY QUE MODIFICARLO   
-    
-    endIf: (G, ctx) => {
-      if (IsVictory(G, ctx)) {
-        alert("GAME FINISHED");
-        return { winner: ctx.currentPlayer };
-      }
-    },
-    */
       
   };
 
@@ -273,7 +223,7 @@ export const Catan = {
       let tileID = lastBuild.tiles[j];
       let newRSS = G.terrainCells[tileID].rss;
 
-      alert("NewRSS: "+newRSS);
+      //alert("NewRSS: "+newRSS);
 
       switch(newRSS){
         case "ore":
@@ -300,6 +250,8 @@ export const Catan = {
           cPlayer.resources.lumber++;
           G.resourcesDeck.lumber--;
           console.log("El jugador "+cPlayer.name+ " roba 1 de lumber");
+          break;
+        case "none":
           break;
         default:
           throw new Error("Non existing rss in function getFirstRSS");
@@ -699,9 +651,110 @@ export const Catan = {
     return false; 
   }
 
+  function selectRandomCard(G,ctx, selPlayer){
+    //ESTADO: TERMINADO SIN REVISAR
+    //FUNCION: Traspasa un recurso al azar de selPlayer al jugador actual
+
+    let cPlayer = G.players[ctx.currentPlayer];
+
+    let keys = Object.keys(selPlayer.resources);
+    let values = Object.values(selPlayer.resources);
+    let mixDeck = [];
+
+    for(let i = 0; i< keys.length; i++){
+      for(let j=0; j<values[i]; j++){
+        mixDeck.push(keys[i])
+      }
+    }
+
+    mixDeck = shuffle(mixDeck);
+    //console.log("Mix Deck: "+mixDeck);
+
+    let card = mixDeck[0];
+    switch(card){
+      case "ore":
+        selPlayer.resources.ore--;
+        cPlayer.resources.ore++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de ore de "+selPlayer.name);    
+        break;
+      case "grain": 
+        selPlayer.resources.grain--;
+        cPlayer.resources.grain++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de grain de "+selPlayer.name);
+        break;
+      case "wool":
+        selPlayer.resources.wool--;
+        cPlayer.resources.wool++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de wool de "+selPlayer.name);
+        break;
+      case "brick":
+        selPlayer.resources.brick--;
+        cPlayer.resources.brick++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de brick de "+selPlayer.name);
+        break;
+      case "lumber":
+        selPlayer.resources.lumber--;
+        cPlayer.resources.lumber++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de lumber de "+selPlayer.name);
+        break;
+      default:
+        throw new Error("Non existing rss in function selectRandomCard");
+    }
+  }
+
+  function stealRssFromRobber(G, ctx, id){
+    //ESTADO: TERMINADO SIN REVISAR
+    //FUNCION: Roba una carta a un jugador, si hay, coolindante al ladron
+
+    let cPlayer = G.players[ctx.currentPlayer];
+    let possiblePlayers = [];
+    let possiblePlayersNames = [];
+
+    for(let i = 0; i< ctx.numPlayers; i++){ //mete a los jugadores cercanos en el arra possiblePlayers
+      if(cPlayer !== G.players[i]){
+        let auxPlayer = G.players[i];
+        let added = false;
+        for(let j = 0; j<auxPlayer.ownedTiles.length; j++){
+          if(auxPlayer.ownedTiles[j].id === id && !added){
+            possiblePlayers.push(auxPlayer);
+            possiblePlayersNames.push(auxPlayer.name);
+            added = true;
+          }
+        }
+      }
+    }
+
+    if(possiblePlayers.length === 0){
+      console.log("No hay jugadores al lado del ladron, por lo que no se roba ninguna carta");
+    }
+    else{
+      
+      let found = -1;
+      let sel;
+
+      while(found === -1){
+        sel = prompt("Selecciona un jugador para robarle ("+possiblePlayersNames.toString()+"): ");
+        found = possiblePlayersNames.indexOf(sel);
+
+        if(found === -1)
+          alert("Jugador no valido, prueba otra vez");
+      }
+
+      let selPlayer = possiblePlayers[found];
+
+      if(countCards(selPlayer)>0){
+        selectRandomCard(G,ctx,selPlayer);
+      }
+      else{
+        alert("El jugador elegido no tiene cartas, mala suerte");
+      }
+
+    }
+
+  }
+
   function placeRobber(G, ctx){
-    //ESTADO: EN PROGRESO
-    //TO-DO: ROBAR LA CARTA, SE PODRIA PONER CON ID EN ARGUMENTO?
+    //ESTADO: TERMINADO SIN REVISAR
     //FUNCION: Mueve al ladron a la casilla que elijas y roba una carta a algun jugador coolindante
     /*
     let playerID = 'player_' + ctx.currentPlayer;
@@ -712,7 +765,7 @@ export const Catan = {
     let finished = false;
     
     while(!finished){
-      //TO-DO: ESTO SOLO DEBERIA APARECERLE AL JUGADOR ACTUAL
+      //TO-DO?: ESTO SOLO DEBERIA APARECERLE AL JUGADOR ACTUAL
       let newID = prompt("¿A que casilla quiere mover el ladron?")
       newID = parseInt(newID);
       while(newID >18 || newID<0){
@@ -728,7 +781,7 @@ export const Catan = {
         G.terrainCells[newID].robber = true;
         G.robberPos = newID;
 
-        //TO-DO:ROBAR LA CARTA AL JUGADOR
+        stealRssFromRobber(G,ctx,newID);
 
       }
       else{
@@ -943,7 +996,7 @@ export const Catan = {
 
   function useMonopoly(G, ctx){
     //ESTADO: EN PROCESO
-    //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
+    //TO-DO: INTERFAZ PARA ELEGIR MATERIAL
     //FUNCION: Usa la carta de desarrollo monopolio
 
     if(G.devCardUsed === true){
@@ -1087,6 +1140,7 @@ export const Catan = {
 
     G.devCardUsed = true;
   }
+
 
   //FUNCION DE ESTADO INICIAL
 
