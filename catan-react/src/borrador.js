@@ -1,4 +1,13 @@
   //DOCUMENTO PARA CODIGO INTERMEDIO O DESCARTADO
+
+//CREACION DE JUGADORES POR FUNCION Y CLASES (NO IBA)
+
+  //players: createPlayers(ctx),
+/*
+player1: new CatanPlayer('player1', 'red'),
+player2: new CatanPlayer('player2', 'blue'),
+*/
+
   /*
     for(let i=0; i<54; i++){
       let cell;

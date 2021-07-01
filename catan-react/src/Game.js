@@ -5,12 +5,17 @@ import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
 
 //GENERAL TO_DO: Exportar los datos de cada turno a un txt.
-//OPTIONAL TO_DO: En caso de que no queden sitios para construir para un jugador
 //GENERAL TO_DO: Sistema de comercio
 //GENERAL TO_DO: PUERTOS
 //GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
 //GENERAL TO_DO: STAGES
+
+//OPTIONAL TO_DO: En caso de que no queden sitios para construir para un jugador
 //OPTIONAL TO_DO: TIRAR DADOS PARA VER QUIEN EMPIEZA
+
+//IMPORTANT TO_DO: MODIFICAR TODAS LOS PROMPT PARA QUE SEA CLICKANDO CON LA INTERFAZ
+
+//DUDA: SE PUEDE CAMBIAR EL SISTEMA DE RECURSOS POR NUMEROS DEL 0 AL 4 PARA REFERIRSE A CADA RSS DENTRO DE LAS FUNCIONES?
 
 
 export const Catan = {
@@ -986,6 +991,116 @@ export const Catan = {
     
   }
 
+  function tradePlayers(G,ctx){
+    //ESTADO: EN PROCESO (NO UTILIZABLE)
+    //TO-DO: PARTE RECEPTROA, QUE SOLO PUEDA VER EL MENSAJE DE LA OFERTA EL QUE LO RECIBE
+    //FUNCIÓN: Comercia con otros jugadores si aceptan
+
+    let cPlayer = G.players[ctx.currentPlayer];
+    let playerNames = [];
+
+    for(let i=0; i< ctx.numPlayers; i++){
+      if(G.players[i] !== cPlayer)
+        playerNames.push(G.players[i].name);
+    }
+
+    let selPlayer = prompt("¿Con que jugador quieres comerciar?");
+
+    if(playerNames.indexOf(selPlayer) === -1){
+      alert("Nombre de jugador no valido");
+      return INVALID_MOVE;
+    }
+
+    let give;
+    let giveOffer = [];
+    let receive;
+    let receiveOffer = [];
+
+    while(give !== "end"){
+      give = prompt("Introduce rss a tu oferta: (ore, grain, wool, brick, lumber)/ 'end' para terminar");
+      switch(give){
+        case "ore":
+          if(cPlayer.resources.ore > 0){
+            cPlayer.resources.ore--;
+            giveOffer.push("ore");
+          }
+          else{
+            alert("No tienes este recurso!");
+          }
+          break;
+        case "wool":
+          if(cPlayer.resources.wool > 0){
+            cPlayer.resources.wool--;
+            giveOffer.push("wool");
+          }
+          else{
+            alert("No tienes este recurso!");
+          }
+          break;
+        case "brick":
+          if(cPlayer.resources.brick > 0){
+            cPlayer.resources.brick--;
+            giveOffer.push("brick");
+          }
+          else{
+            alert("No tienes este recurso!");
+          }
+          break;
+        case "grain":
+          if(cPlayer.resources.grain > 0){
+            cPlayer.resources.grain--;
+            giveOffer.push("grain");
+          }
+          else{
+            alert("No tienes este recurso!");
+          }
+          break;
+        case "lumber":
+          if(cPlayer.resources.lumber > 0){
+            cPlayer.resources.lumber--;
+            giveOffer.push("lumber");
+          }
+          else{
+            alert("No tienes este recurso!");
+          }
+          break;
+        case "end":
+          break;
+        default:
+          alert("Nombre no valido de recurso");
+          break;
+      }
+    }
+    
+    while(receive !== "end"){
+      receive = prompt("¿Que quieres a cambio?: (ore, grain, wool, brick, lumber)/ 'end' para terminar");
+      switch(give){
+        case "ore":
+          receiveOffer.push("ore");
+          break;
+        case "wool":
+          receiveOffer.push("wool");
+          break;
+        case "brick":
+          receiveOffer.push("brick");
+          break;
+        case "grain":
+          receiveOffer.push("grain");
+          break;
+        case "lumber":
+          receiveOffer.push("lumber");
+          break;
+        case "end":
+          break;
+        default:
+          alert("Nombre no valido de recurso");
+          break;
+      }
+    }
+
+    //TO_DO: FALTA QUE EL OTRO JUGADOR ACEPTE O DECLINE LA OFERTA (EN CUYO CASO SE LE DEVUELVEN LOS RSS)
+  }
+
 
   //FUNCIONES DE CARTAS DE DESARROLLO
   
@@ -1431,11 +1546,6 @@ export const Catan = {
        
         cells: Array(9).fill(null), //este hay que borrarlo
         
-        //players: createPlayers(ctx),
-        /*
-        player1: new CatanPlayer('player1', 'red'),
-        player2: new CatanPlayer('player2', 'blue'),
-        */
         diceValue: 0 ,
         robberPos: firstRobber,
         longestRoadId: -1,
