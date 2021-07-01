@@ -4,16 +4,19 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
 
-//GENERAL TO_DO: Exportar los datos de cada turno a un txt.
-//GENERAL TO_DO: Sistema de comercio
+//FINAL TO_DO: Exportar los datos de cada turno a un txt.
+
+//IMPORTANT TO_DO: MODIFICAR TODAS LOS PROMPT PARA QUE SEA CLICKANDO CON LA INTERFAZ
+
+//GENERAL TO_DO: STAGE DE COMERCIO
+//GENERAL TO_DO: LONGEST ROAD
 //GENERAL TO_DO: PUERTOS
+//GENERAL TO_DO: SISTEMA DE COMERCIO ENTRE PLAYERS
+
 //GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
-//GENERAL TO_DO: STAGES
 
 //OPTIONAL TO_DO: En caso de que no queden sitios para construir para un jugador
 //OPTIONAL TO_DO: TIRAR DADOS PARA VER QUIEN EMPIEZA
-
-//IMPORTANT TO_DO: MODIFICAR TODAS LOS PROMPT PARA QUE SEA CLICKANDO CON LA INTERFAZ
 
 //DUDA: SE PUEDE CAMBIAR EL SISTEMA DE RECURSOS POR NUMEROS DEL 0 AL 4 PARA REFERIRSE A CADA RSS DENTRO DE LAS FUNCIONES?
 
@@ -43,6 +46,11 @@ export const Catan = {
                 end = false;
             }
             if(end){
+              ctx.events.setActivePlayers({
+                value: {
+                  '0': 'throwDiceStage',
+                }
+              });
               alert("Fase de preparacion terminada, empieza el juego!");
             }
             return end;
@@ -54,8 +62,54 @@ export const Catan = {
         },
 
         play:{
+
+          turn: {
+            stages: {
+              throwDiceStage: {
+                moves: { 
+                  throwDice, 
+                },
+                moveLimit: 1,
+              },
+            },
+            //TO-DO: Faltaria stage de comercio de jugadores
+          },
+
           moves: {
-            trowDice,
+            buildRoad,
+            buildSettlement,
+            buildCity,
+            buyDevCard,
+            useKnight,
+            useInvent,
+            useMonopoly,
+            useRoadBuild,
+            tradeBank,
+            
+            addRss: (G, ctx, num) => { //ADMIN ACTION
+
+              let cPlayer = G.players[ctx.currentPlayer];
+    
+              cPlayer.resources.lumber += num;
+              cPlayer.resources.brick += num;
+              cPlayer.resources.ore += num;
+              cPlayer.resources.wool += num;
+              cPlayer.resources.grain += num;
+            },
+            addPoint: (G, ctx) => { //ADMIN ACTION
+
+              let cPlayer = G.players[ctx.currentPlayer];
+    
+              cPlayer.points++;
+            },
+
+            endTurn,
+          }
+              
+                
+          /* SIN STAGES
+          moves: {
+            throwDice,
             buildRoad,
             buildSettlement,
             buildCity,
@@ -83,7 +137,7 @@ export const Catan = {
               cPlayer.points++;
             },
           },
-
+          */
 
         },
     },
@@ -123,6 +177,14 @@ export const Catan = {
 
 
   //FUNCIONES DE ACCIONES DEL JUEGO
+
+  function endTurn(G, ctx){
+    //ESTADO: TERMINADA REVISADA
+    //FUNCION: Termina el turno e inicia de nuevo la fase de dados para el siguiente jugador
+
+    ctx.events.endTurn();
+    ctx.events.setActivePlayers({currentPlayer: 'throwDiceStage'});
+  }
 
   function diceRoll() {
     //ESTADO: TERMINADA REVISADA
@@ -265,7 +327,7 @@ export const Catan = {
     
   }
 
-  function trowDice (G, ctx){
+  function throwDice (G, ctx){
     //ESTADO: EN PROGRESO
     //TO-DO: DESCARTAR 
     //FUNCION: Tira los dados y realiza la accion correspondiente (recursos y ladron)
@@ -339,6 +401,8 @@ export const Catan = {
 
     }
 
+    ctx.events.endStage();
+
   }
 
   function buildFirstSettlement (G, ctx, id){
@@ -369,6 +433,7 @@ export const Catan = {
     G.placeCells[id].type = 0;
     G.placeCells[id].owner = ctx.currentPlayer;
     cPlayer.settlements.push(G.placeCells[id]);
+    console.log("El jugador "+cPlayer.name+" construye un poblado inicial en: "+id);
 
     for(let i = 0; i<G.placeCells[id].tiles.length; i++){
       let id_t = G.placeCells[id].tiles[i];
@@ -423,6 +488,7 @@ export const Catan = {
     G.placeCells[id].type = 0;
     G.placeCells[id].owner = ctx.currentPlayer;
     cPlayer.settlements.push(G.placeCells[id]);
+    console.log("El jugador "+cPlayer.name+" construye un poblado en: "+id);
 
     for(let i = 0; i<G.placeCells[id].tiles.length; i++){
       let id_t = G.placeCells[id].tiles[i];
@@ -478,6 +544,7 @@ export const Catan = {
     //Coste 1 de madera y 1 de arcilla
     G.roadCells[id].value = ctx.currentPlayer;
     cPlayer.roads.push(G.roadCells[id]);
+    console.log("El jugador "+cPlayer.name+" construye una carretera inicial en: "+id);
   }
 
   function buildRoad (G, ctx, id){
@@ -513,6 +580,7 @@ export const Catan = {
     //Coste 1 de madera y 1 de arcilla
     G.roadCells[id].value = ctx.currentPlayer;
     cPlayer.roads.push(G.roadCells[id]);
+    console.log("El jugador "+cPlayer.name+" construye una carretera en: "+id);
     cPlayer.resources.brick--;
     cPlayer.resources.lumber--;
 
@@ -559,6 +627,7 @@ export const Catan = {
     
     G.placeCells[id].type = 1;
     cPlayer.cities.push(G.placeCells[id]);
+    console.log("El jugador "+cPlayer.name+" construye una ciudad en: "+id);
 
     //uan ciudad cuenta como dos pueblos para el recurso correspondiente
     for(let i = 0; i<G.placeCells[id].tiles.length; i++){
@@ -599,6 +668,7 @@ export const Catan = {
       cPlayer.points++;
 
     cPlayer.devCards.push(newCard);
+    console.log("El jugador "+cPlayer.name+" compra una carta de desarrollo: "+newCard);
   }
 
   function checkProximity(G, id){
@@ -785,6 +855,7 @@ export const Catan = {
         G.terrainCells[G.robberPos].robber = false;
         G.terrainCells[newID].robber = true;
         G.robberPos = newID;
+        console.log("El jugador "+cPlayer.name+" coloca el ladron en: "+newID);
 
         stealRssFromRobber(G,ctx,newID);
 
@@ -1130,6 +1201,7 @@ export const Catan = {
     }
     else{
       cPlayer.devCards.splice(cPlayer.devCards.indexOf("knight"),1);
+      console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Caballero");
     }
 
     placeRobber(G, ctx);
@@ -1209,6 +1281,7 @@ export const Catan = {
     }
     else{
       cPlayer.devCards.splice(cPlayer.devCards.indexOf("invent"),1);
+      console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Invento");
     }
 
     for(let i=0; i<2; i++){
@@ -1306,6 +1379,7 @@ export const Catan = {
     while(newRSS !== "ore" && newRSS !== "grain"  && newRSS !== "lumber" && newRSS !== "brick" && newRSS !== "wool")
       newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
 
+    console.log("El jugador "+cPlayer.name+" usa carta de desarrollo Monopolio con el recurso: "+newRSS);
     stealRssFromPlayers(cPlayer, G, ctx, newRSS);
     G.devCardUsed = true;
   }
@@ -1322,6 +1396,7 @@ export const Catan = {
             while(auxPlayer.resources.ore > 0){
               auxPlayer.resources.ore--;
               cPlayer.resources.ore++;
+              console.log("El jugador "+cPlayer.name+" recibe 1 de ore de: "+auxPlayer.name);
             }
           }
         }
@@ -1333,6 +1408,7 @@ export const Catan = {
             while(auxPlayer.resources.grain > 0){
               auxPlayer.resources.grain--;
               cPlayer.resources.grain++;
+              console.log("El jugador "+cPlayer.name+" recibe 1 de grain de: "+auxPlayer.name);
             }
           }
         }
@@ -1344,6 +1420,7 @@ export const Catan = {
             while(auxPlayer.resources.wool > 0){
               auxPlayer.resources.wool--;
               cPlayer.resources.wool++;
+              console.log("El jugador "+cPlayer.name+" recibe 1 de wool de: "+auxPlayer.name);
             }
           }
         }
@@ -1355,6 +1432,7 @@ export const Catan = {
             while(auxPlayer.resources.brick > 0){
               auxPlayer.resources.brick--;
               cPlayer.resources.brick++;
+              console.log("El jugador "+cPlayer.name+" recibe 1 de brick de: "+auxPlayer.name);
             }
           }
         }
@@ -1366,6 +1444,7 @@ export const Catan = {
             while(auxPlayer.resources.lumber > 0){
               auxPlayer.resources.lumber--;
               cPlayer.resources.lumber++;
+              console.log("El jugador "+cPlayer.name+" recibe 1 de lumber de: "+auxPlayer.name);
             }
           }
         }
@@ -1401,6 +1480,7 @@ export const Catan = {
     }
     else{
       cPlayer.devCards.splice(cPlayer.devCards.indexOf("roadsBuild"),1);
+      console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Carreteras");
     }
 
     for(let i=0; i<2; i++){
