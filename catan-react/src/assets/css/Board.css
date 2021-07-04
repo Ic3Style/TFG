@@ -1,0 +1,66 @@
+  /* TABLERO Y FILAS */
+  
+  .tablero{
+    background-color: blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 5%;
+    height: 80%;
+    width: 100%;
+
+    position: relative;
+    /*margin-left: 37%;*/
+    }
+
+  .fila_0, .fila_4{
+    display: flex;
+  }
+  .fila_1, .fila_3{
+    display: flex;
+  }
+  .fila_2{
+    display: flex;
+  }
+
+/*-----------------*/
+
+  .bosque_img{
+      width: 80px;
+      height: 80px;
+  }
+
+/*-----------------*/ 
+/*BARRA DE ACCIONES*/
+
+  .barraAcciones{
+    width: 70%;
+    background-color: green;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3%;
+
+  }
+
+  .icon{
+    height: 80px;
+    width: 80px;
+    margin: 10px;
+    
+    background-color: yellow;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+  .icon:hover{
+    background-color: orange;
+  }
+
+/*-----------------*/
+
+
+

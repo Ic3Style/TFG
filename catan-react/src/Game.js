@@ -549,7 +549,7 @@ export const Catan = {
 
   function buildRoad (G, ctx, id){
     //ESTADO: EN PROCESO
-    //TO-DO: 
+    //TO-DO: LONGEST ROAD (SISTEMA DE CHECKEO DE CAMINO MAS LARGO, IGUAL POR BACKTRACKING)
     //FUNCIÓN: Construye una carretera siguiendo las reglas del juego en la carretera id
     /*
     let playerID = 'player_' + ctx.currentPlayer;
@@ -1532,7 +1532,7 @@ export const Catan = {
 
     cards = shuffle(cards);
 
-    let firstRobber = -1;
+    let firstRobber = -1; //para la primera posicion del ladron (desierto)
 
     //JUGADORES
 
@@ -1587,8 +1587,8 @@ export const Catan = {
           rss: rssFromTile(locations[i]),
           number: 0,
           robber: true,
-          x: 0,
-          y: 0
+          //x: 0,
+          //y: 0
         }
         firstRobber = i;
       }
@@ -1600,8 +1600,8 @@ export const Catan = {
           rss: rssFromTile(locations[i]),
           number: values[valIndex],
           robber: false,
-          x: 0, //valdran para la interfaz
-          y: 0
+          //x: 0, //valdran para la interfaz
+          //y: 0
         }
         valIndex++;
       }

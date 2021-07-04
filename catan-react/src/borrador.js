@@ -324,3 +324,56 @@ player_1: {
       }
     },
     */
+
+/*ANTIGUO TABLERO*/
+  /*
+for (let i = 0; i < 5; i++) {
+let cells = [];
+for (let j = 0; j < 5; j++) {
+  const id = 5 * i + j;
+  cells.push( //he quitado el onclick
+    <td style={cellStyle} key={id} onClick = {this.props.G.moves.endTurn()}> 
+      {this.props.G.cells[id]}
+    </td>
+  );
+}
+tbody.push(<tr key={i}>{cells}</tr>);
+}
+
+        const cellStyle = {
+          border: '1px solid #555',
+          width: '50px',
+          height: '50px',
+          lineHeight: '50px',
+          textAlign: 'center',
+        };
+*/
+/*estaba en board pero no se utilizaba
+
+function shuffle (array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+}
+
+  ///he quitado el clickHandler
+  // Make a list with the right number of each tile
+  var locations = ["Hills", "Hills", "Hills",
+  "Forest", "Forest", "Forest", "Forest",
+  "Mountains", "Mountains", "Mountains",
+  "Fields", "Fields", "Fields", "Fields",
+  "Pasture", "Pasture", "Pasture", "Pasture",
+  "Dessert"];
+
+  // Make a list with the right number of each tile value
+  var values = [2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12];
+
+  // Randomly shuffle the location array and the values array
+  locations = shuffle(locations);
+  values = shuffle(values);
+
+  */

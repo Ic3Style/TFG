@@ -1,5 +1,5 @@
 import React from 'react';
-import "../assets/css/Board.css";
+import "../assets/css/Casilla.css";
 
 const Casilla = (props) => {
     //const [state, setstate] = useState("");
