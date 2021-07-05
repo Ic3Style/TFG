@@ -28,7 +28,7 @@ import React from 'react';
 import { Client } from 'boardgame.io/react';
 import { Local } from 'boardgame.io/multiplayer';
 import { Catan } from './Game';
-import { CatanBoard } from './Board';
+import  Board  from './Board';
 
 function setNumPlayers(){
   let n = prompt("¿Cuantos jugadores sois?");
@@ -59,7 +59,7 @@ const App = () => (
 
 const App = Client({
   game: Catan,
-  board: CatanBoard,
+  board: Board,
   debug: true,
   //numPlayers: setNumPlayers(), //DESCOMENTAR
   numPlayers: 3,

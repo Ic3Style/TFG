@@ -1,16 +1,54 @@
-import React from 'react';
+import React ,{useState , useEffect}from 'react';
 import "./assets/css/Board.css";
-import ImageBosque from "./assets/images/bosque.png";
+import circulo from "./assets/images/circulo2.png";
 import Casilla from "./components/Casilla";
 
 <script src= "Game.js"></script>
 
-export class CatanBoard extends React.Component {
-
-    render() {
-
+export default function Board(props) {
+    const [arrInter, setArrInter] = useState(["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"]);
+    const [state, setstate] = useState(true);
+    /* useEffect(() => {
+          let arrayTemp=[];
+          for (let i=0; i<=5; i++){
+            for(let j=0; j<=3; j++){
+              arrayTemp.push("o")
+            }
+          }
+          setArrVertice(arrayTemp)
+     }, []);
+     useEffect(() => {
+        let arrayTemp=[];
+        for (let i=0; i<=5; i++){
+          for(let j=0; j<=3; j++){
+            arrayTemp.push("o")
+          }
+        }
+        setArrVertice(arrayTemp)
+      }, [state]);
+      */
+      /*
+      document.addEventListener("DOMContentLoaded", inicio, false); 
+      function inicio() 
+      { 
+      var nuevaImagen = new Image(); 
+      alert("Se procede a la carga en memoria de la imagen"); 
+      nuevaImagen = cargarImagen("./assets/images/circulo.png"); 
+      } 
+      function cargarImagen(url) 
+      { 
+      var imagen = new Image(); 
+      imagen.onload = imagenCargada; 
+      imagen.src = url; 
+      return imagen; 
+      } 
+      function imagenCargada() 
+      { 
+      alert("La imagen se ha cargado correctamente"); 
+      } 
+      */
       function onclickEND() {
-        this.props.moves.endTurn()
+        props.moves.endTurn()
       }
 
       let uniqueID = 0;
@@ -18,7 +56,7 @@ export class CatanBoard extends React.Component {
 
       let barra =  
       <div className="barraAcciones">
-        <div className="icon" id="throwDice" onClick={() => this.props.moves.throwDice()}>
+        <div className="icon" id="throwDice" onClick={() => props.moves.throwDice()}>
             tDice
         </div>
         <div className="icon" id="buildSet">
@@ -27,10 +65,12 @@ export class CatanBoard extends React.Component {
         <div className="icon" id="buildRoad">
             buildR
         </div>
-        <div className="icon" id="buildCity">
-            buildC
-        </div>
-        <div className="icon" id="buyDev" onClick={() => this.props.moves.buyDevCard()}>
+        <select className="icon" id="buildCity">
+        <option></option>
+            <option>Casa</option>
+            <option>Puente</option>
+        </select>
+        <div className="icon" id="buyDev" onClick={() => props.moves.buyDevCard()}>
             buyDev
         </div>
         <div className="icon" id="trade">
@@ -48,8 +88,8 @@ export class CatanBoard extends React.Component {
         if(i===0 || i===4)
           for (let j = 0; j < 3; j++) {   
 
-            cells.push( //he quitado el onclick
-                <Casilla uniqueID={uniqueID} idNumber ={this.props.G.terrainCells[uniqueID].number}/>
+            cells.push( 
+                <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile}/>
             );
             uniqueID++;
 
@@ -57,8 +97,8 @@ export class CatanBoard extends React.Component {
         else if(i===1 || i===3)
           for (let j = 0; j < 4; j++) {
   
-            cells.push( //he quitado el onclick
-              <Casilla uniqueID={uniqueID} idNumber ={this.props.G.terrainCells[uniqueID].number}/>
+            cells.push( 
+              <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile}/>
             );
             uniqueID++;
 
@@ -66,31 +106,58 @@ export class CatanBoard extends React.Component {
         else{
           for (let j = 0; j < 5; j++) {
 
-                cells.push( //he quitado el onclick
-                <Casilla uniqueID={uniqueID} idNumber ={this.props.G.terrainCells[uniqueID].number} tile ={this.props.G.terrainCells[uniqueID].tile}/>
+                cells.push(
+                <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile}/>
             );
             uniqueID++;
 
           }
         }
 
-        tbody.push(<tr key={i} className={`fila_${i}`}>{cells}</tr>);
+        tbody.push(<tr key={i.toString()} className={`fila_${i}`}>{cells}</tr>);
       }
       
-
+      function handleInterClick(index){
+        console.log(index)
+      }
       return (
         <div>
+           {
+          arrInter?.map((element, index) =>{
+            return(
+              <button onClick={()=>handleInterClick(index)}>{element}</button>
+            )
+              
+          })}
           <table id="board">
             <tbody className={"tablero"}>{tbody}</tbody>
           </table>
 
           {barra}
-          
-          <img className="bosque_img" id="bosqueimg" src={ImageBosque}/>
+         
+
+          {<img className="circulo_img" id="circuloimg" src={circulo}/>}
+         
           Aqui se pone info de la partida y cartas
+          1 - Array con la representacion de la interseccion.
+          2 - Manera de calcular la posicion de la interseccion.
+          ["o","b",.....]
         </div>
       );
-    }
+    
+
+          /*
+          state.cadenaTexto.map((elemento)=>{
+            // Posicion
+            // CalculaVertices
+            // Relacion de posiciones
+            //array = [[100, 120], [100, 140]]
+            //if(elemento == "b"){
+            //  return(<img src={circulo}/>)
+            //}
+           
+          })
+          */
 
 
 
