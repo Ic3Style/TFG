@@ -7,6 +7,7 @@ import Casilla from "./components/Casilla";
 
 export default function Board(props) {
     const [arrInter, setArrInter] = useState(["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"]);
+    const [arrCarr, setarrCarr] = useState(["o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o"]);
     const [state, setstate] = useState(true);
     /* useEffect(() => {
           let arrayTemp=[];
@@ -35,7 +36,7 @@ export default function Board(props) {
         console.log(top, left)
       }
 
-      function showCirInter(circ_imgs){
+      function showCirInter(){
 
         //ESTADO: TERMINADO SIN REVISAR
         //TO-DO: 
@@ -132,6 +133,84 @@ export default function Board(props) {
           }
       }
 
+      function showCirCarr(){
+
+        //ESTADO: TERMINADO SIN REVISAR
+        //TO-DO: 
+        //FUNCION: Muestra los circulos de las intersecciones
+
+        let firstHex = document.getElementById(0);
+        let secHex = document.getElementById(1);
+        let cuaHex = document.getElementById(3);
+        let top1 = firstHex.getBoundingClientRect().top;
+        let top2 = cuaHex.getBoundingClientRect().top;
+        let left1 = firstHex.getBoundingClientRect().left;
+        let left2 = secHex.getBoundingClientRect().left;
+
+        let horDist = left2 - left1;
+        let verDist = top2 - top1;
+        let verDistPeq = 40;
+
+        /*
+        modImg.style.left = (left1 + 49 + horDist*i)+'px';
+        modImg.style.top = top1 -68 + 'px';
+        */
+
+        for(let i = 0; i<6; i++){
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist/2)*(i)+ 'px';
+          modImg.style.top = 38 + 'px';
+        }
+
+        for (let i = 6; i < 10; i++) {
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist)*(i-6) - horDist/4+ 'px';
+          modImg.style.top = 38 + verDist/2 + 'px';
+        }
+
+        for (let i = 10; i < 18; i++) {
+          
+        }
+
+        for (let i = 18; i < 23; i++) {
+          
+        }
+
+        for (let i = 23; i < 33; i++) {
+          
+        }
+
+        for (let i = 33; i < 39; i++) {
+          
+        }
+
+        for (let i = 39; i < 49; i++) {
+          
+        }
+
+        for (let i = 49; i < 54; i++) {
+          
+        }
+
+        for (let i = 54; i < 62; i++) {
+          
+        }
+
+        for (let i = 62; i < 66; i++) {
+          
+        }
+
+        for (let i = 66; i < 72; i++) {
+          
+        }
+
+        let elements = document.querySelectorAll('.circulos_carr');
+        for(let i=0; i<elements.length; i++){
+            elements[i].style.display = "flex";
+            elements[i].style.position = "absolute";
+        }
+    }
+      
       function onclickEND() {
         props.moves.endTurn()
       }
@@ -157,10 +236,10 @@ export default function Board(props) {
         <div className="icon" id="throwDice" onClick={() => props.moves.throwDice()}>
             tDice
         </div>
-        <div className="icon" id="buildSet" onClick={() => showCirInter(cir_imgs)}>
+        <div className="icon" id="buildSet" onClick={() => showCirInter()}>
             buildS
         </div>
-        <div className="icon" id="buildRoad">
+        <div className="icon" id="buildRoad"  onClick={() => showCirCarr()}>
             buildR
         </div>
         <select className="icon" id="buildCity">
@@ -217,9 +296,18 @@ export default function Board(props) {
       }
 
       let cir_imgs = [];
-      for (let i = 0; i < 72; i++) {
+      let cir_carr_imgs = [];
+
+      //circulos para las intersecciones
+      for (let i = 0; i < 54; i++) {
         cir_imgs.push(
-          <img className="circulos_inter" id={`cir_${i}`} src={circulo} onClick={() => ibuildSettlement(i)}/>
+          <img className="circulos_inter" id={`cirI_${i}`} src={circulo} onClick={() => ibuildSettlement(i)}/>
+        );
+      }
+      //circulos para las carreteras
+      for (let i = 0; i < 72; i++) {
+        cir_carr_imgs.push(
+          <img className="circulos_carr" id={`cirC_${i}`} src={circulo} />
         );
       }
       //document.getElementById('buttonLED'+id).setAttribute('onclick','writeLED(1,1)')
@@ -242,7 +330,8 @@ export default function Board(props) {
 
           {barra}
 
-          {cir_imgs}       
+          {cir_imgs}  
+          {cir_carr_imgs}     
 
           {<img className="circulo_img" id="circuloimg" src={circulo}/>}
          
