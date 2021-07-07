@@ -1,7 +1,26 @@
 import React ,{useState , useEffect}from 'react';
 import "./assets/css/Board.css";
+
+import testImg from "./assets/images/forest.png";
+
 import circulo from "./assets/images/circulo2.png";
+
+import card_brick from "./assets/images/card_brick.png";
+import card_lumber from "./assets/images/card_lumber.png";
+import card_ore from "./assets/images/card_ore.png";
+import card_wool from "./assets/images/card_wool.png";
+import card_grain from "./assets/images/card_grain.png";
+
+import card_knight from "./assets/images/card_knight.png";
+import card_invent from "./assets/images/card_invent.png";
+import card_monopoly from "./assets/images/card_monopoly.png";
+import card_vPoint from "./assets/images/card_vPoint1.png";
+
 import Casilla from "./components/Casilla";
+
+//TO-DO: ARREGLAR LA BARRA DE LAS CARTAS PORQUE SE VAN PARA LA IZDA
+//TO-DO: tabla con estado del juego
+//OPTIONAL TO-DO: ROTAR VPOINTS
 
 <script src= "Game.js"></script>
 
@@ -137,7 +156,7 @@ export default function Board(props) {
 
         //ESTADO: TERMINADO SIN REVISAR
         //TO-DO: 
-        //FUNCION: Muestra los circulos de las intersecciones
+        //FUNCION: Muestra los circulos de las carreteras
 
         let firstHex = document.getElementById(0);
         let secHex = document.getElementById(1);
@@ -149,12 +168,6 @@ export default function Board(props) {
 
         let horDist = left2 - left1;
         let verDist = top2 - top1;
-        let verDistPeq = 40;
-
-        /*
-        modImg.style.left = (left1 + 49 + horDist*i)+'px';
-        modImg.style.top = top1 -68 + 'px';
-        */
 
         for(let i = 0; i<6; i++){
           let modImg = document.getElementById(cir_carr_imgs[i].props.id);
@@ -169,39 +182,57 @@ export default function Board(props) {
         }
 
         for (let i = 10; i < 18; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist/2)*(i-11)+ 'px';
+          modImg.style.top = 38 + verDist + 'px';
         }
 
         for (let i = 18; i < 23; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist)*(i-19) + horDist/4+ 'px';
+          modImg.style.top = 38 + verDist + verDist/2 + 'px';
         }
 
         for (let i = 23; i < 33; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist/2)*(i-25)+ 'px';
+          modImg.style.top = 38 + 2*verDist + 'px';
         }
 
         for (let i = 33; i < 39; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist)*(i-34) - horDist/4+ 'px';
+          modImg.style.top = 38 + 2*verDist + verDist/2 + 'px';
         }
 
         for (let i = 39; i < 49; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist/2)*(i-41)+ 'px';
+          modImg.style.top = 38 + 3*verDist + 'px';
         }
 
         for (let i = 49; i < 54; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist)*(i-50) + horDist/4+ 'px';
+          modImg.style.top = 38 + 3*verDist + verDist/2 + 'px';
         }
 
         for (let i = 54; i < 62; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist/2)*(i-55)+ 'px';
+          modImg.style.top = 38 + 4*verDist + 'px';
         }
 
         for (let i = 62; i < 66; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist)*(i-62) - horDist/4+ 'px';
+          modImg.style.top = 38 + 4*verDist + verDist/2 + 'px';
         }
 
         for (let i = 66; i < 72; i++) {
-          
+          let modImg = document.getElementById(cir_carr_imgs[i].props.id);
+          modImg.style.left = 217+ (horDist/2)*(i-66)+ 'px';
+          modImg.style.top = 38 + 5*verDist + 'px';
         }
 
         let elements = document.querySelectorAll('.circulos_carr');
@@ -209,7 +240,7 @@ export default function Board(props) {
             elements[i].style.display = "flex";
             elements[i].style.position = "absolute";
         }
-    }
+      }
       
       function onclickEND() {
         props.moves.endTurn()
@@ -220,6 +251,9 @@ export default function Board(props) {
         //TO-DO: MODIFICAR ESTADO PARA ACTUALIZAR LAS FIGURAS DEL MAPA
         //FUNCION: Ejecuta la accion de crear pueblo y hace desaparecer los circulos
         
+        if(props.ctx.phase === "firstBuilds")
+          props.moves.buildFirstSettlement(id);
+        else
         props.moves.buildSettlement(id);
         
         let elements = document.querySelectorAll('.circulos_inter');
@@ -228,34 +262,110 @@ export default function Board(props) {
           }
       }
 
+      function ibuildRoad(id, id_img){
+        //ESTADO: EN PROCESO
+        //TO-DO: MODIFICAR ESTADO PARA ACTUALIZAR LAS FIGURAS DEL MAPA
+        //FUNCION: Ejecuta la accion de crear pueblo y hace desaparecer los circulos
+
+      let img = document.getElementById(id_img);
+      let left = img.style.left;
+      let top = img.style.top;
+        //seguir con esto, se debe solo hacer si no se devuelve Invalid move
+      let target = document.getElementById("testImg");
+      target.style.display = "flex";
+      target.style.position = "absolute";
+      target.style.left = left;
+      target.style.top = top;
+
+      if(props.ctx.phase === "firstBuilds")
+        props.moves.buildFirstRoad(id);
+      else
+        props.moves.buildRoad(id);
+        
+        let elements = document.querySelectorAll('.circulos_carr');
+          for(let i=0; i<elements.length; i++){
+              elements[i].style.display = "none";
+          }
+      }
+
+      //Coge las cartas de rss del jugador y las muestra por pantalla
+
+      let playerCards = [];
+
+      for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.brick; i++){
+        playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Brick_${i}`} src={card_brick} />);
+      }
+      for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.lumber; i++){
+        playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Lumber_${i}`} src={card_lumber} />);
+      }
+      for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.wool; i++){
+        playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Wool_${i}`} src={card_wool} />);
+      }
+      for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.ore; i++){
+        playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Ore_${i}`} src={card_ore} />);
+      }
+      for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.grain; i++){
+        playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Grain_${i}`} src={card_grain} />);
+      }
+
+      //Coge las cartas de dev del jugador y las muestra por pantalla
+
+      let devCards = [];
+
+      for(let i=0; i<props.G.players[props.ctx.currentPlayer].devCards.length; i++){
+        let actCard = props.G.players[props.ctx.currentPlayer].devCards[i];
+        if(actCard === "knight")
+          devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Knight_${i}`} src={card_knight} onClick={() => props.moves.useKnight()}/>);
+        else if(actCard === "monopoly")
+          devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Monopoly_${i}`} src={card_monopoly} onClick={() => props.moves.useMonopoly()}/>);
+        else if(actCard === "invent")
+          devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Invent_${i}`} src={card_invent} onClick={() => props.moves.useInvent()}/>);
+        else
+        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}vPoint_${i}`} src={card_vPoint} />);
+      }
+
+
       let uniqueID = 0;
       let tbody = [];
 
       let barra =  
       <div className="barraAcciones">
-        <div className="icon" id="throwDice" onClick={() => props.moves.throwDice()}>
-            tDice
+        <div className="cartasPlayer"> 
+          {playerCards}
         </div>
-        <div className="icon" id="buildSet" onClick={() => showCirInter()}>
-            buildS
+        <div className="devCards">
+          {devCards}
         </div>
-        <div className="icon" id="buildRoad"  onClick={() => showCirCarr()}>
-            buildR
+        <div className="acciones"> 
+          <div className="icon" id="throwDice" onClick={() => props.moves.throwDice()}>
+              tDice
+          </div>
+          <div className="icon" id="buildSet" onClick={() => showCirInter()}>
+              buildS
+          </div>
+          <div className="icon" id="buildCity" >
+              buildC
+          </div>
+          <div className="icon" id="buildRoad"  onClick={() => showCirCarr()}>
+              buildR
+          </div>
+          <select className="icon" id="useDev">
+              Select Dev
+              <option>Invent</option>
+              <option onClick={() => showCirInter()}>Monopoly</option> 
+              <option>Knight</option>
+          </select>
+          <div className="icon" id="buyDev" onClick={() => props.moves.buyDevCard()}>
+              buyDev
+          </div>
+          <div className="icon" id="trade" >
+              trade
+          </div>
+          <div className="icon" id="endTurn" >
+              endTurn
+          </div> 
         </div>
-        <select className="icon" id="buildCity">
-        <option></option>
-            <option>Casa</option>
-            <option>Puente</option>
-        </select>
-        <div className="icon" id="buyDev" onClick={() => props.moves.buyDevCard()}>
-            buyDev
-        </div>
-        <div className="icon" id="trade">
-            trade
-        </div>
-        <div className="icon" id="endTurn" >
-            endTurn
-        </div>
+
       </div>;
 
       
@@ -307,7 +417,7 @@ export default function Board(props) {
       //circulos para las carreteras
       for (let i = 0; i < 72; i++) {
         cir_carr_imgs.push(
-          <img className="circulos_carr" id={`cirC_${i}`} src={circulo} />
+          <img className="circulos_carr" id={`cirC_${i}`} src={circulo} onClick={() => ibuildRoad(i, `cirC_${i}`)}/>
         );
       }
       //document.getElementById('buttonLED'+id).setAttribute('onclick','writeLED(1,1)')
@@ -332,18 +442,21 @@ export default function Board(props) {
 
           {cir_imgs}  
           {cir_carr_imgs}     
-
-          {<img className="circulo_img" id="circuloimg" src={circulo}/>}
          
           Aqui se pone info de la partida y cartas
           1 - Array con la representacion de la interseccion.
           2 - Manera de calcular la posicion de la interseccion.
           ["o","b",.....]
+
+          <img className="testImg" id="testImg" src={testImg}/>
         </div>
       );
     
 
           /*
+
+                    {<img className="circulo_img" id="circuloimg" src={circulo}/>}
+
           state.cadenaTexto.map((elemento)=>{
             // Posicion
             // CalculaVertices
