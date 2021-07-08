@@ -1,3 +1,11 @@
+  .testImg{
+    width: 55px;
+    height: 55px;
+
+    display: none;
+  }
+  
+  
   /* TABLERO Y FILAS */
 
   .html, .body{ /*no va muy bien*/
@@ -12,7 +20,7 @@
   }
   
   .tablero{
-    background-color: blue;
+    background-color: rgb(165, 234, 247);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,38 +51,107 @@
       height: 55px;
   }
 
-  .circulos_inter{
+  .circulos_inter, .circulos_carr{
     width: 55px;
     height: 55px;
     display: none;
     /*visibility: hidden;*/
+  }
 
-}
-  .circulos_inter:hover{
+  .circulos_inter:hover, .circulos_carr:hover{
     border: aqua;
     border-style: solid;
     border-width: 5px;
     border-radius: 100%;
+    width: 60px;
+    height: 60px;
   }
 
 /*-----------------*/ 
 /*BARRA DE ACCIONES*/
 
-  .barraAcciones{
-    width: 70%;
-    background-color: green;
+  .cartasPlayer{
+    background-color: purple;
+
+    display: flex;
+
+    width: 80%;
     height: 100%;
+    margin-left: 2%;
+    overflow: auto;
+
+    position: relative;
+    top: 0;
+    left: 0;
+
+    border: 3px solid blue;
+    margin-left: 1%;
+  }
+
+  .rssCard{
+    width: 55.86px;
+    height: 82.593px;
+    position: relative;
+    left: 0;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 3%;
+  }
+
+  .rssCard:hover{
+    width: 70px;
+    height: 95px;
+  }
+
+  .devCards{
+    background-color: aqua;
+    display: flex;
+
+    width: 20%;
+    height: 100%;
+
+    overflow: auto;
+
+    position: relative;
+    top: 0;
+    left: 0;
+
+    border: 3px solid blue;
+    margin-left: 1%;
+    margin-right: 1%;
+  }
+
+  .acciones{
+    background-color: red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+    top: 0;
+
+    margin-right: 15%;
+    margin-left: 2%;
+  }
+
+  .barraAcciones{
+    width: 100%;
+    background-color: green;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    bottom: 2.5%;
 
   }
 
   .icon{
-    height: 80px;
-    width: 80px;
-    margin: 10px;
+    height: 70px;
+    width: 70px;
+    margin: 5px;
     
     background-color: yellow;
     display: flex;
@@ -87,6 +164,21 @@
   }
 
 /*-----------------*/
+/* IMGS DE PIEZAS */
 
+ .img_carr{
+
+   height: 12px;
+   width: auto;
+
+   display: none;
+
+   position: absolute;
+   z-index: 40;
+
+   /*transform: rotate(-30deg);*/
+   transform: rotate(90deg);
+   /*transform: rotate(30deg);*/
+ }
 
 

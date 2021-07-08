@@ -3,10 +3,12 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 //import { Location } from "./Location.js";
 import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
+import { setImgRoad }  from './Board';
 
 //FINAL TO_DO: Exportar los datos de cada turno a un txt.
 
 //IMPORTANT TO_DO: MODIFICAR TODAS LOS PROMPT PARA QUE SEA CLICKANDO CON LA INTERFAZ
+//IMPORTANT TO_DO: EL JUGADOR 2 (TERCERO) NO PUEDE TIRAR --> NO SE ACTIVA LA STAGE
 
 //GENERAL TO_DO: STAGE DE COMERCIO
 //GENERAL TO_DO: LONGEST ROAD
@@ -35,7 +37,25 @@ export const Catan = {
 
     phases: {
         firstBuilds:{
-          moves: {buildFirstSettlement, buildFirstRoad},
+          moves: {buildFirstSettlement, buildFirstRoad,
+
+            addRss: (G, ctx, num) => { //ADMIN ACTION
+
+              let cPlayer = G.players[ctx.currentPlayer];
+    
+              cPlayer.resources.lumber += num;
+              cPlayer.resources.brick += num;
+              cPlayer.resources.ore += num;
+              cPlayer.resources.wool += num;
+              cPlayer.resources.grain += num;
+            },
+            addPoint: (G, ctx) => { //ADMIN ACTION
+
+              let cPlayer = G.players[ctx.currentPlayer];
+    
+              cPlayer.points++;
+            },},
+
           start: true,
           next: 'play',
           endIf: (G, ctx) => { //ACABA CUANDO TODOS LOS JUGADORES TIENEN 2 POBLADOS Y 2 CARRETERAS INICIALES
@@ -103,7 +123,23 @@ export const Catan = {
               cPlayer.points++;
             },
 
+            setLArmy:  (G, ctx) => { //ADMIN ACTION
+
+              let cPlayer = G.players[ctx.currentPlayer];
+    
+              cPlayer.largestArmy = true;           
+             },
+            
+            setLRoad:  (G, ctx) => { //ADMIN ACTION
+
+            let cPlayer = G.players[ctx.currentPlayer];
+  
+            cPlayer.longestRoad = true;           
+            },
+
+
             endTurn,
+          
           }
               
                 
@@ -519,7 +555,7 @@ export const Catan = {
 
   function buildFirstRoad (G, ctx, id){
     //ESTADO: EN PROCESO
-    //TO-DO: NECESITA FUNCIONES PROPIAS PARA COMPROBAR QUE SE CONSTRUYA JUNTO AL NUEVO EDIFICIO
+    //TO-DO: 
     //FUNCIÓN: Construye las primeras carreteras sin coste al inicio de la partida
     /*
     let playerID = 'player_' + ctx.currentPlayer;
@@ -540,6 +576,8 @@ export const Catan = {
       alert("No tienes conexion con esa casilla de carretera");
       return INVALID_MOVE;
     }
+
+    setImgRoad(G, ctx, id); //pone la imagen de la carretera
 
     //Coste 1 de madera y 1 de arcilla
     G.roadCells[id].value = ctx.currentPlayer;
@@ -576,6 +614,8 @@ export const Catan = {
       alert("No tienes conexion con esa casilla de carretera");
       return INVALID_MOVE;
     }
+
+    setImgRoad(G, ctx, id); //pone la imagen de la carretera
 
     //Coste 1 de madera y 1 de arcilla
     G.roadCells[id].value = ctx.currentPlayer;
@@ -828,8 +868,18 @@ export const Catan = {
 
   }
 
+  function setTerrainClickable(){
+    //HAY QUE CAMBIARLO
+    let elements = document.querySelectorAll('.hexagon');
+    for(let i=0; i<elements.length; i++){
+        //elements[i].style.display = "none";
+    }
+
+  }
+
   function placeRobber(G, ctx){
-    //ESTADO: TERMINADO SIN REVISAR
+    //ESTADO: EN PROCESO
+    //TO:DO: INTERFAZ GRAFICA DE ELEGIR CASILLA
     //FUNCION: Mueve al ladron a la casilla que elijas y roba una carta a algun jugador coolindante
     /*
     let playerID = 'player_' + ctx.currentPlayer;
@@ -842,6 +892,9 @@ export const Catan = {
     while(!finished){
       //TO-DO?: ESTO SOLO DEBERIA APARECERLE AL JUGADOR ACTUAL
       let newID = prompt("¿A que casilla quiere mover el ladron?")
+
+      setTerrainClickable();//MODIFICAR
+
       newID = parseInt(newID);
       while(newID >18 || newID<0){
         alert("Numero de casilla no valido");
@@ -1542,7 +1595,7 @@ export const Catan = {
     }
 
     function getColour(i){
-      let colors = ["red", "blue", "orange", "white"];
+      let colors = ["red", "blue", "green", "white"];
       return colors[i];
     }
 
@@ -1580,28 +1633,22 @@ export const Catan = {
     for(let i=0; i<19; i++){
       let cell ;
       if(locations[i] === "Dessert"){
-        //cell = new Location(i, locations[i], 0, 0, 0); //x e y nulas de momento
         cell = {
           id: i,
           tile: locations[i],
           rss: rssFromTile(locations[i]),
           number: 0,
           robber: true,
-          //x: 0,
-          //y: 0
         }
         firstRobber = i;
       }
       else {
-        //cell = new Location(i, locations[i], values[valIndex], 0, 0); //x e y nulas de momento
         cell = {
           id: i,
           tile: locations[i],
           rss: rssFromTile(locations[i]),
           number: values[valIndex],
           robber: false,
-          //x: 0, //valdran para la interfaz
-          //y: 0
         }
         valIndex++;
       }
@@ -1623,8 +1670,6 @@ export const Catan = {
     }
 
     return {
-       
-        cells: Array(9).fill(null), //este hay que borrarlo
         
         diceValue: 0 ,
         robberPos: firstRobber,

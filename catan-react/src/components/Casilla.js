@@ -86,6 +86,15 @@ function Casilla (props)  {
         }
         return clase;
     }
+
+    function extractDessert(n){
+        let s;
+        if(n === 0){
+            s = ""
+        }
+        else s = n;
+        return s;
+    }
     
     //{ state}
 
@@ -93,7 +102,7 @@ function Casilla (props)  {
 
             <td style={setColor(props.tile)} className={`hexagon extraColor${setClassToExtra(props.tile)}`}  id={props.uniqueID}  key={`hex_${props.uniqueID}`} onClick={(e)=>{moveElement(e)}}> 
                   {<div className="numberContainer">
-                      <b className="number" id={`number${setRedNumbers(props.idNumber)}`}>{props.idNumber}</b>
+                      <b className="number" id={`number${setRedNumbers(props.idNumber)}`}>{extractDessert(props.idNumber)}</b>
                     </div>}
             </td>
  

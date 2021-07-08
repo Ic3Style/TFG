@@ -377,3 +377,49 @@ function shuffle (array) {
   values = shuffle(values);
 
   */
+
+
+  /*
+  let player = props.ctx.currentPlayer;
+        let color = props.G.players[player].color;
+        let nCarr = props.G.players[player].roads.length;
+        let img;
+
+        let circ_img = document.getElementById(`cirC_${id}`);
+
+
+        switch(color){
+          case "red":
+            img = document.getElementById(`carrR_${nCarr}`);
+            break;
+          case "blue":
+            img = document.getElementById(`carrA_${nCarr}`);
+            break;
+          case "green":
+            img = document.getElementById(`carrV_${nCarr}`);
+            break;
+          case "white":
+            img = document.getElementById(`carrB_${nCarr}`);
+            break;
+          default:
+            alert("ERROR EN ibuildRoad");
+            break;
+        }
+
+        let left = circ_img.getBoundingClientRect().left;
+        let top =  circ_img.getBoundingClientRect().top;
+          //seguir con esto, se debe solo hacer si no se devuelve Invalid move
+
+        img.style.display = "flex";
+        img.style.position = "absolute";
+
+        img.style.left = left-1+"px";
+        img.style.top = top+20+"px";
+
+        if(id===0 || id===2 ||id===4 ||id===10 ||id===12 ||id===14 ||id===16 ||id===23 ||id===25 ||id===27 ||id===29 ||id===31 ||id===40 ||id===42 ||id===44 ||id===46 ||id===48 ||id===55 ||id===57 ||id===59 ||id===61 ||id===67 ||id===69 ||id===71){
+          img.style.transform = "rotate(-30deg)";
+        }
+        else if(id===1 || id===3 ||id===5 ||id===11 ||id===13 ||id===15 ||id===17 ||id===24 ||id===26 ||id===28 ||id===30 ||id===32 ||id===39 ||id===41 ||id===43 ||id===45 ||id===47 ||id===54 ||id===56 ||id===58 ||id===60 ||id===66 ||id===68 ||id===70){
+          img.style.transform = "rotate(+30deg)";
+        }
+  */
