@@ -213,6 +213,9 @@ export default function Board(props) {
     }
 
     function ibuyDevCard(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Ejecuta la accion de comprar carta de desarrollo
       hideCirCarr();
       hideCirInter();
       props.moves.buyDevCard()
@@ -432,7 +435,7 @@ export default function Board(props) {
       }
     }
     
-    function onclickEND() { //SIN USAR DE MOMENTO
+    function iendTurn() { //SIN USAR DE MOMENTO
       hideCirCarr();
       hideCirInter();
       props.moves.endTurn()
@@ -574,7 +577,7 @@ export default function Board(props) {
         <div className="icon" id="trade" >
             trade
         </div>
-        <div className="icon" id="endTurn" >
+        <div className="icon" id="endTurn" onClick={() => iendTurn()}>
             endTurn
         </div> 
       </div>
