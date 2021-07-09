@@ -167,18 +167,34 @@
 /* IMGS DE PIEZAS */
 
  .img_carr{
-
    height: 12px;
    width: auto;
-
    display: none;
 
    position: absolute;
    z-index: 40;
 
-   /*transform: rotate(-30deg);*/
    transform: rotate(90deg);
-   /*transform: rotate(30deg);*/
+ }
+
+ .img_pob{
+   height: 27px;
+   width: auto;
+
+   display: none;
+   position: absolute;
+ }
+
+ .img_city{
+  height: 30px;
+  width: 21px;
+
+  display: none;
+  position: absolute;
+  /*
+  top: 17%;
+  left: 18.47%;
+  */
  }
 
 

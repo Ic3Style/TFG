@@ -3,7 +3,7 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 //import { Location } from "./Location.js";
 import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
-import { setImgRoad }  from './Board';
+import { setImgRoad , setImgSet , setImgCity }  from './Board';
 
 //FINAL TO_DO: Exportar los datos de cada turno a un txt.
 
@@ -207,7 +207,6 @@ export const Catan = {
     //FUNCION: Borra un elemento de un array
 
     var i = arr.indexOf( item );
-    alert("index: "+i)
     arr.splice( i, 1 );
   }
 
@@ -471,6 +470,8 @@ export const Catan = {
     cPlayer.settlements.push(G.placeCells[id]);
     console.log("El jugador "+cPlayer.name+" construye un poblado inicial en: "+id);
 
+    setImgSet(G, ctx, id);
+
     for(let i = 0; i<G.placeCells[id].tiles.length; i++){
       let id_t = G.placeCells[id].tiles[i];
       cPlayer.ownedTiles.push(G.terrainCells[id_t]);
@@ -525,6 +526,8 @@ export const Catan = {
     G.placeCells[id].owner = ctx.currentPlayer;
     cPlayer.settlements.push(G.placeCells[id]);
     console.log("El jugador "+cPlayer.name+" construye un poblado en: "+id);
+
+    setImgSet(G, ctx, id);
 
     for(let i = 0; i<G.placeCells[id].tiles.length; i++){
       let id_t = G.placeCells[id].tiles[i];
@@ -659,7 +662,6 @@ export const Catan = {
 
     //Se elimina de la lista de settlements del jugador
     let cityFilter = cPlayer.settlements.filter(obj => obj.id === id)
-    //alert(JSON.stringify(cityFilter[0], null, 4));
     removeItemFromArr(cPlayer.settlements, cityFilter[0])
 
     cPlayer.resources.ore -= 3;
@@ -668,6 +670,8 @@ export const Catan = {
     G.placeCells[id].type = 1;
     cPlayer.cities.push(G.placeCells[id]);
     console.log("El jugador "+cPlayer.name+" construye una ciudad en: "+id);
+
+    setImgCity(G, ctx, id);
 
     //uan ciudad cuenta como dos pueblos para el recurso correspondiente
     for(let i = 0; i<G.placeCells[id].tiles.length; i++){
