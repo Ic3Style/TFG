@@ -8,7 +8,7 @@ import { setImgRoad , setImgSet , setImgCity }  from './Board';
 //FINAL TO_DO: Exportar los datos de cada turno a un txt.
 
 //IMPORTANT TO_DO: MODIFICAR TODAS LOS PROMPT PARA QUE SEA CLICKANDO CON LA INTERFAZ
-//IMPORTANT TO_DO: EL JUGADOR 2 (TERCERO) NO PUEDE TIRAR --> NO SE ACTIVA LA STAGE
+//IMPORTANT TO_DO: EL JUGADOR 2 (TERCERO) NO PUEDE TIRAR --> NO SE ACTIVA LA STAGE ----- PARECE QUE FUNCIONA LOL
 
 //GENERAL TO_DO: STAGE DE COMERCIO
 //GENERAL TO_DO: LONGEST ROAD
@@ -219,6 +219,7 @@ export const Catan = {
 
     ctx.events.endTurn();
     ctx.events.setActivePlayers({currentPlayer: 'throwDiceStage'});
+    G.devCardUsed = false;
   }
 
   function diceRoll() {

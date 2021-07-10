@@ -31,7 +31,8 @@
 
 
     position: relative;
-    /*margin-left: 37%;*/
+    margin-left: 10%;
+    margin-top: 3%;
     }
 
   .fila_0, .fila_4{
@@ -197,4 +198,123 @@
   */
  }
 
+/*-----------------*/
+/* TABLA INFO */
 
+ .tabla_Info{
+   position: absolute;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   flex-direction: column;
+
+   background-color: chocolate;
+   height: 70%;
+   width: 25%;
+   top: 8%;
+   left: 55%;
+ }
+
+ .fila_Info{
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   flex-direction: row;
+
+   background-color: rgb(116, 233, 188);
+   height: 15%;
+   width: 90%;
+   margin: 1%;
+ }
+
+ #titulo_info{
+  height: 8%;
+ }
+
+ .columna_Info{
+   display: flex;
+
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+
+   height: 100%;
+   width: 20%;
+
+   margin: 0.5%;
+   border: 3px solid blue;
+ }
+
+ #special_info{
+  font: 200% sans-serif;
+  font-weight: 700;
+ }
+
+ .icon_info{
+   height: auto;
+   width: 70%;
+ }
+
+ .parte_sup{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  top: 1%;
+  height: 40%;
+  width: 50%;
+  border: 3px solid black;
+  border-radius: 10%;
+ }
+
+ #red_color{
+   background-color: red;
+ }
+
+ #blue_color{
+  background-color: blue;
+ }
+
+ #green_color{
+  background-color: green;
+ }
+
+ #white_color{
+  background-color: white;
+ }
+
+ .parte_inf{
+  
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+
+  width: 90%;
+  height: 20%;
+
+  margin-top: 10%;
+  background-color: rgb(201, 118, 212);
+ }
+
+ #nombre_info{
+   font: 100% sans-serif;
+   font-weight: 700;
+ }
+
+ .card_Info{
+   height: 80%;
+   width: auto;
+ }
+
+
+ /*
+ .card_Info:hover{
+   position: absolute;
+   top: 0;
+   left: -160%;
+ }
+ */

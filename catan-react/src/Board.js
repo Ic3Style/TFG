@@ -32,7 +32,13 @@ import city_a from "./assets/images/city_a.png";
 import city_v from "./assets/images/city_v.png";
 import city_r from "./assets/images/city_r.png";
 
+import vPoint from "./assets/images/vPoint.png";
+import card_lArmy from "./assets/images/card_largestArmy.png";
+import card_lRoad from "./assets/images/card_largestRoad.png";
+
 import Casilla from "./components/Casilla";
+import { getName } from 'domutils';
+import { func } from 'assert-plus';
 
 //TO-DO: tabla con estado del juego
 //OPTIONAL TO-DO: ROTAR VPOINTS
@@ -364,67 +370,67 @@ export default function Board(props) {
 
       for(let i = 0; i<6; i++){
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i)+ 'px';
+        modImg.style.left = 217+ (horDist/2)*(i)+ horDist/2+ 'px';
         modImg.style.top = 38 + 'px';
       }
 
       for (let i = 6; i < 10; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-6) - horDist/4+ 'px';
+        modImg.style.left = 217+ (horDist)*(i-6) - horDist/4+ horDist/2+ 'px';
         modImg.style.top = 38 + verDist/2 + 'px';
       }
 
       for (let i = 10; i < 18; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-11)+ 'px';
+        modImg.style.left = 217+ (horDist/2)*(i-11)+ horDist/2+ 'px';
         modImg.style.top = 38 + verDist + 'px';
       }
 
       for (let i = 18; i < 23; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-19) + horDist/4+ 'px';
+        modImg.style.left = 217+ (horDist)*(i-19) + horDist/4+ horDist/2+ 'px';
         modImg.style.top = 38 + verDist + verDist/2 + 'px';
       }
 
       for (let i = 23; i < 33; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-25)+ 'px';
+        modImg.style.left = 217+ (horDist/2)*(i-25)+ horDist/2+ 'px';
         modImg.style.top = 38 + 2*verDist + 'px';
       }
 
       for (let i = 33; i < 39; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-34) - horDist/4+ 'px';
-        modImg.style.top = 38 + 2*verDist + verDist/2 + 'px';
+        modImg.style.left = 217+ (horDist)*(i-34) - horDist/4+ horDist/2+ 'px';
+        modImg.style.top = 38 + 2*verDist + verDist/2 +  'px';
       }
 
       for (let i = 39; i < 49; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-41)+ 'px';
+        modImg.style.left = 217+ (horDist/2)*(i-41)+ horDist/2+ 'px';
         modImg.style.top = 38 + 3*verDist + 'px';
       }
 
       for (let i = 49; i < 54; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-50) + horDist/4+ 'px';
+        modImg.style.left = 217+ (horDist)*(i-50) + horDist/4+ horDist/2+ 'px';
         modImg.style.top = 38 + 3*verDist + verDist/2 + 'px';
       }
 
       for (let i = 54; i < 62; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-55)+ 'px';
+        modImg.style.left = 217+ (horDist/2)*(i-55)+ horDist/2+ 'px';
         modImg.style.top = 38 + 4*verDist + 'px';
       }
 
       for (let i = 62; i < 66; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-62) - horDist/4+ 'px';
+        modImg.style.left = 217+ (horDist)*(i-62) - horDist/4+ horDist/2+ 'px';
         modImg.style.top = 38 + 4*verDist + verDist/2 + 'px';
       }
 
       for (let i = 66; i < 72; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-66)+ 'px';
+        modImg.style.left = 217+ (horDist/2)*(i-66)+ horDist/2+ 'px';
         modImg.style.top = 38 + 5*verDist + 'px';
       }
 
@@ -565,12 +571,6 @@ export default function Board(props) {
         <div className="icon" id="buildRoad"  onClick={() => showCirCarr()}>
             buildR
         </div>
-        <select className="icon" id="useDev">
-            Select Dev
-            <option>Invent</option>
-            <option>Monopoly</option> 
-            <option>Knight</option>
-        </select>
         <div className="icon" id="buyDev" onClick={() => ibuyDevCard()}>
             buyDev
         </div>
@@ -581,8 +581,314 @@ export default function Board(props) {
             endTurn
         </div> 
       </div>
-
     </div>;
+
+    function getName(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve el nombre del jugador segun el id
+      let name = "";
+      let nPlayers = props.ctx.numPlayers;
+
+      if(i<nPlayers){
+        name = props.G.players[i].name;
+      }
+      return name;
+    }
+
+    function getVPoints(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve el numero de puntos del jugador segun el id
+      let points = 0
+      let nPlayers = props.ctx.numPlayers;
+
+      if(i<nPlayers){
+        points = props.G.players[i].points;
+      }
+
+      return points;
+    }
+
+    function getNumSet(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve el numero de poblados del jugador segun el id
+      let nSet = 0
+      let nPlayers = props.ctx.numPlayers;
+
+      if(i<nPlayers){
+        nSet = props.G.players[i].settlements.length;
+      }
+
+      return nSet;
+    }
+
+    function getNumCity(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve el numero de ciudades del jugador segun el id
+      let nCit = 0
+      let nPlayers = props.ctx.numPlayers;
+
+      if(i<nPlayers){
+        nCit = props.G.players[i].cities.length;
+      }
+
+      return nCit;
+    }
+
+    function getNumRoad(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve el numero de carreteras del jugador segun el id
+      let nRoad = 0
+      let nPlayers = props.ctx.numPlayers;
+
+      if(i<nPlayers){
+        nRoad = props.G.players[i].roads.length;
+      }
+
+      return nRoad;
+    }
+
+    function getLRoad(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve la carretera mas larga del jugador segun el id
+      let LRoad = 0
+      let nPlayers = props.ctx.numPlayers;
+
+      if(i<nPlayers){
+        LRoad = props.G.players[i].biggestRoad;
+      }
+
+      return LRoad;
+    }
+
+    function getArmy(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve el ejercito del jugador segun el id
+      let army = 0
+      let nPlayers = props.ctx.numPlayers;
+
+      if(i<nPlayers){
+        army = props.G.players[i].usedKnights;
+      }
+
+      return army;
+    }
+
+    let tablaInfo =
+    <div className ="tabla_Info">
+      <div className="fila_Info" id="titulo_info">
+        <h2>ESTADO DE LA PARTIDA</h2>
+      </div>
+      <div className="fila_Info" id="red_info">
+
+        <div className="columna_Info" id="red_name">
+          <div className="parte_sup" id="red_color">
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getName(0)}
+          </div>
+        </div>
+        <div className="columna_Info" id="red_vPoints">
+          <div className="parte_sup">
+              <img className = "icon_info" src={vPoint} alt="Puntos de victoria"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getVPoints(0)}
+          </div>
+        </div>
+        <div className="columna_Info" id="red_setNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={pob_r} alt="Imagen de poblado"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNumSet(0)}
+          </div>
+        </div>
+        <div className="columna_Info" id="red_cityNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={city_r} alt="Imagen de ciudad"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNumCity(0)}
+          </div>
+        </div>
+        <div className="columna_Info" id="red_roadNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={carr_r} alt="Imagen de carretera"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNumRoad(0)}
+          </div>
+        </div>
+      </div>
+      <div className="fila_Info" id="blue_info">
+
+        <div className="columna_Info" id="blue_name">
+          <div className="parte_sup" id="blue_color">
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getName(1)}
+          </div>
+        </div>
+        <div className="columna_Info" id="blue_vPoints">
+          <div className="parte_sup">
+            <img className = "icon_info" src={vPoint} alt="Puntos de victoria"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getVPoints(1)}
+          </div>
+        </div>
+        <div className="columna_Info" id="blue_setNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={pob_a} alt="Imagen de poblado"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNumSet(1)}
+          </div>
+        </div>
+        <div className="columna_Info" id="blue_cityNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={city_a} alt="Imagen de ciudad"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+           {getNumCity(1)}
+          </div>
+        </div>
+        <div className="columna_Info" id="blue_roadNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={carr_a} alt="Imagen de carretera"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNumRoad(1)}
+          </div>
+        </div>
+      </div>
+      <div className="fila_Info" id="green_info">
+
+        <div className="columna_Info" id="green_name">
+          <div className="parte_sup" id="green_color">
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getName(2)}
+          </div>
+        </div>
+        <div className="columna_Info" id="green_vPoints">
+          <div className="parte_sup">
+            <img className = "icon_info" src={vPoint} alt="Puntos de victoria"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getVPoints(2)}
+          </div>
+        </div>
+        <div className="columna_Info" id="green_setNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={pob_v} alt="Imagen de poblado"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+           {getNumSet(2)}
+          </div>
+        </div>
+        <div className="columna_Info" id="green_cityNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={city_v} alt="Imagen de ciudad"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+           {getNumCity(2)}
+          </div>
+        </div>
+        <div className="columna_Info" id="green_roadNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={carr_v} alt="Imagen de carretera"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+           {getNumRoad(2)}
+          </div>
+        </div>     
+      </div>
+      <div className="fila_Info" id="white_info">
+
+        <div className="columna_Info" id="white_name">
+          <div className="parte_sup" id="white_color">
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getName(3)}
+          </div>
+        </div>
+        <div className="columna_Info" id="white_vPoints">
+          <div className="parte_sup">
+           <img className = "icon_info" src={vPoint} alt="Puntos de victoria"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getVPoints(3)}
+          </div> 
+        </div>
+        <div className="columna_Info" id="white_setNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={pob_b} alt="Imagen de poblado"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+           {getNumSet(3)}
+          </div>
+        </div>
+        <div className="columna_Info" id="white_cityNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={city_b} alt="Imagen de ciudad"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNumCity(3)}
+          </div>
+        </div>
+        <div className="columna_Info" id="white_roadNum">
+          <div className="parte_sup">
+            <img className = "icon_info" src={carr_b} alt="Imagen de carretera"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNumRoad(3)}
+          </div>
+        </div>
+      
+      </div>
+      <div className="fila_Info" id="lRoad_info">
+        <div className="columna_Info" id="lRoadCard">
+            <img  className = "card_Info" src={card_lArmy} alt="Carta de mayor ejercito"/>
+        </div>
+        <div className="columna_Info" id="special_info">
+          {getLRoad(0)}
+        </div>
+        <div className="columna_Info" id="special_info">
+          {getLRoad(1)}
+        </div>
+        <div className="columna_Info" id="special_info">
+          {getLRoad(2)}
+        </div>
+        <div className="columna_Info" id="special_info">
+          {getLRoad(3)}
+        </div>
+      </div> 
+      <div className="fila_Info" id="lArmy_info">
+        <div className="columna_Info" id="lArmyCard">
+          <img  className = "card_Info" src={card_lRoad} alt="Carta de mayor carretera"/>
+        </div>
+        <div className="columna_Info" id="special_info">
+          {getArmy(0)}
+        </div>
+        <div className="columna_Info" id="special_info">
+          {getArmy(1)}
+        </div>
+        <div className="columna_Info" id="special_info">
+         {getArmy(2)}
+        </div>
+        <div className="columna_Info" id="special_info">
+          {getArmy(3)}
+        </div>
+        </div>         
+    </div>
 
     
     for (let i = 0; i < 5; i++) {
@@ -735,33 +1041,32 @@ export default function Board(props) {
     }
 
     //document.getElementById('buttonLED'+id).setAttribute('onclick','writeLED(1,1)')
-    
-    return (
-      <div>
 
-          {
+    /*          {
         arrInter?.map((element, index) =>{
 
           return(
             <button id={`inter_${index}`} onClick={()=>getCoords()}>{element}</button>
           )
             
-        })}      
+        })} */
+    
+    return (
+      <div>
+
+      
 
         <table id="board">
           <tbody className={"tablero"}>{tbody}</tbody>
         </table>
+
+        {tablaInfo}
 
         {barra}
 
         {cir_imgs}  
         {cir_carr_imgs}
         
-        Aqui se pone info de la partida y cartas
-        1 - Array con la representacion de la interseccion.
-        2 - Manera de calcular la posicion de la interseccion.
-        ["o","b",.....]
-
         {carr_a_arr}
         {carr_b_arr}
         {carr_r_arr}
@@ -796,6 +1101,12 @@ export default function Board(props) {
           //}
           
         })
+
+
+                Aqui se pone info de la partida y cartas
+        1 - Array con la representacion de la interseccion.
+        2 - Manera de calcular la posicion de la interseccion.
+        ["o","b",.....]
         */
 
 
