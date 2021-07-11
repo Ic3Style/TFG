@@ -96,7 +96,9 @@ function Casilla (props)  {
 
             <td style={setColor(props.tile)} className={`hexagon extraColor${setClassToExtra(props.tile)}`}  id={props.uniqueID}  key={`hex_${props.uniqueID}`} onClick={(e)=>{moveElement(e)}}> 
                   {<div className="numberContainer">
-                      <b className="number" id={`number${setRedNumbers(props.idNumber)}`}>{extractDessert(props.idNumber)}</b>
+                      <div className="circleNumber">
+                          <b className="number" id={`number${setRedNumbers(props.idNumber)}`}>{extractDessert(props.idNumber)}</b>
+                      </div>
                     </div>}
             </td>
  

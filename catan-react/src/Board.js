@@ -1212,8 +1212,8 @@ export default function Board(props) {
     let rleft = rHex.getBoundingClientRect().left;
     let rtop = rHex.getBoundingClientRect().top;
   
-    robImg.style.left = rleft + 42 +"px";
-    robImg.style.top = rtop + 12 +"px";
+    robImg.style.left = rleft + 40 +"px";
+    robImg.style.top = rtop + 8 +"px";
     
     return (
       <div>

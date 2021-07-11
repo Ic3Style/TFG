@@ -423,3 +423,25 @@ function shuffle (array) {
           img.style.transform = "rotate(+30deg)";
         }
   */
+
+
+/*
+  .hexagon:before,
+  .hexagon:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 75px solid transparent;
+    border-right: 75px solid transparent;
+  }
+
+  .hexagon:before {
+    bottom: 100%;
+    border-bottom: 43.30px solid #64C7CC;
+  }
+
+  .hexagon:after {
+    top: 100%;
+    width: 0;
+    border-top: 43.30px solid #64C7CC;
+  }*/
