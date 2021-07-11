@@ -36,9 +36,18 @@ import vPoint from "./assets/images/vPoint.png";
 import card_lArmy from "./assets/images/card_largestArmy.png";
 import card_lRoad from "./assets/images/card_largestRoad.png";
 
+import cancel from "./assets/images/cancel.png";
+import users from "./assets/images/users.png";
+import bank from "./assets/images/bank.png";
+import dices from "./assets/images/dices.png";
+import end from "./assets/images/end.png";
+import trade from "./assets/images/trade.png";
+import buy_dev from "./assets/images/buyDev.png";
+
 import Casilla from "./components/Casilla";
 import { getName } from 'domutils';
 import { func } from 'assert-plus';
+import { getDocumentMode } from 'parse5/lib/tree-adapters/default';
 
 //TO-DO: tabla con estado del juego
 //OPTIONAL TO-DO: ROTAR VPOINTS
@@ -370,68 +379,68 @@ export default function Board(props) {
 
       for(let i = 0; i<6; i++){
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i)+ horDist/2+ 'px';
-        modImg.style.top = 38 + 'px';
+        modImg.style.left = 223+ (horDist/2)*(i)+ horDist/2+  'px';
+        modImg.style.top = 43 + 'px';
       }
 
       for (let i = 6; i < 10; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-6) - horDist/4+ horDist/2+ 'px';
-        modImg.style.top = 38 + verDist/2 + 'px';
+        modImg.style.left = 223+ (horDist)*(i-6) - horDist/4+ horDist/2+ 'px';
+        modImg.style.top = 43 + verDist/2 + 'px';
       }
 
       for (let i = 10; i < 18; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-11)+ horDist/2+ 'px';
-        modImg.style.top = 38 + verDist + 'px';
+        modImg.style.left = 223+ (horDist/2)*(i-11)+ horDist/2+ 'px';
+        modImg.style.top = 43 + verDist + 'px';
       }
 
       for (let i = 18; i < 23; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-19) + horDist/4+ horDist/2+ 'px';
-        modImg.style.top = 38 + verDist + verDist/2 + 'px';
+        modImg.style.left = 223+ (horDist)*(i-19) + horDist/4+ horDist/2+ 'px';
+        modImg.style.top = 43 + verDist + verDist/2 + 'px';
       }
 
       for (let i = 23; i < 33; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-25)+ horDist/2+ 'px';
-        modImg.style.top = 38 + 2*verDist + 'px';
+        modImg.style.left = 223+ (horDist/2)*(i-25)+ horDist/2+ 'px';
+        modImg.style.top = 43 + 2*verDist + 'px';
       }
 
       for (let i = 33; i < 39; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-34) - horDist/4+ horDist/2+ 'px';
-        modImg.style.top = 38 + 2*verDist + verDist/2 +  'px';
+        modImg.style.left = 223+ (horDist)*(i-34) - horDist/4+ horDist/2+ 'px';
+        modImg.style.top = 43 + 2*verDist + verDist/2 +  'px';
       }
 
       for (let i = 39; i < 49; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-41)+ horDist/2+ 'px';
-        modImg.style.top = 38 + 3*verDist + 'px';
+        modImg.style.left = 223+ (horDist/2)*(i-41)+ horDist/2+ 'px';
+        modImg.style.top = 43 + 3*verDist + 'px';
       }
 
       for (let i = 49; i < 54; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-50) + horDist/4+ horDist/2+ 'px';
-        modImg.style.top = 38 + 3*verDist + verDist/2 + 'px';
+        modImg.style.left = 223+ (horDist)*(i-50) + horDist/4+ horDist/2+ 'px';
+        modImg.style.top = 43 + 3*verDist + verDist/2 + 'px';
       }
 
       for (let i = 54; i < 62; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-55)+ horDist/2+ 'px';
-        modImg.style.top = 38 + 4*verDist + 'px';
+        modImg.style.left = 223+ (horDist/2)*(i-55)+ horDist/2+ 'px';
+        modImg.style.top = 43 + 4*verDist + 'px';
       }
 
       for (let i = 62; i < 66; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist)*(i-62) - horDist/4+ horDist/2+ 'px';
-        modImg.style.top = 38 + 4*verDist + verDist/2 + 'px';
+        modImg.style.left = 223+ (horDist)*(i-62) - horDist/4+ horDist/2+ 'px';
+        modImg.style.top = 43 + 4*verDist + verDist/2 + 'px';
       }
 
       for (let i = 66; i < 72; i++) {
         let modImg = document.getElementById(cir_carr_imgs[i].props.id);
-        modImg.style.left = 217+ (horDist/2)*(i-66)+ horDist/2+ 'px';
-        modImg.style.top = 38 + 5*verDist + 'px';
+        modImg.style.left = 223+ (horDist/2)*(i-66)+ horDist/2+ 'px';
+        modImg.style.top = 43 + 5*verDist + 'px';
       }
 
       let elements = document.querySelectorAll('.circulos_carr');
@@ -441,7 +450,11 @@ export default function Board(props) {
       }
     }
     
-    function iendTurn() { //SIN USAR DE MOMENTO
+    function iendTurn() { 
+      //ESTADO: EN PROCESO
+      //TO-DO: 
+      //FUNCION: Ejecuta la accion de acabar turno
+
       hideCirCarr();
       hideCirInter();
       props.moves.endTurn()
@@ -510,6 +523,140 @@ export default function Board(props) {
       props.moves.useInvent()
     }
 
+    //Pop up general
+    let bgPop =
+    <div className="bgPop" id="bg_pop">
+    </div>
+
+    //Pop up de trade
+
+    let tradePopUp =
+    <div className="tradeContainer" id="tradePopUp">
+      <div className="tradeOption" id="tradeBank">
+        <img className="tradeOption_img" id="img_bank" src={bank} alt="Imagen de banco"/>
+      </div>
+      <div className="tradeOption" id="tradePlayers">
+        <img  className="tradeOption_img" src={users} alt="Imagen de users"/>
+      </div>
+      <div className="cancel" onClick={() => cancelTradePop()}>
+        <img id="cancel_img" src={cancel} alt="Imagen de cruz"/>
+      </div>
+    </div>
+
+    function showTradePop() {
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Muestra el pop up de tradeo
+      hideCirCarr();
+      hideCirInter();
+
+      let elem = document.getElementById("tradePopUp");
+      elem.style.display = "flex";
+
+      let bg = document.getElementById("bg_pop");
+      bg.style.display = "flex";
+    }
+
+    function cancelTradePop() {
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Cierra el pop up de tradeo
+      let elem = document.getElementById("tradePopUp");
+      elem.style.display = "none";
+
+      let bg = document.getElementById("bg_pop");
+      bg.style.display = "none";
+    }
+
+    function showSet(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Muestra una imagen de settlement en la barra de acciones dependiendo del jugador que sea su turno
+
+      let color = props.G.players[props.ctx.currentPlayer].color;
+      let img;
+
+      switch(color){
+        case "red":
+          img = <img className="iconSC_img" src={pob_r}/>;
+          break;
+        case "blue":
+          img = <img className="iconSC_img" src={pob_a}/>;
+          break;
+        case "green":
+          img = <img className="iconSC_img" src={pob_v}/>;
+          break;
+        case "white":
+          img = <img className="iconSC_img" src={pob_b}/>;
+          break;
+        default:
+          alert("ERROR EN showSet: "+color);
+          break;
+      }
+
+      return img;
+    }
+
+    function showCity(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Muestra una imagen de ciudad en la barra de acciones dependiendo del jugador que sea su turno
+
+      let color = props.G.players[props.ctx.currentPlayer].color;
+      let img;
+
+      switch(color){
+        case "red":
+          img = <img className="iconSC_img" src={city_r}/>;
+          break;
+        case "blue":
+          img = <img className="iconSC_img" src={city_a}/>;
+          break;
+        case "green":
+          img = <img className="iconSC_img" src={city_v}/>;
+          break;
+        case "white":
+          img = <img className="iconSC_img" src={city_b}/>;
+          break;
+        default:
+          alert("ERROR EN showCity: "+color);
+          break;
+      }
+
+      return img;
+    }
+
+    function showCarr(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Muestra una imagen de carretera en la barra de acciones dependiendo del jugador que sea su turno
+
+      let color = props.G.players[props.ctx.currentPlayer].color;
+      let img;
+
+      switch(color){
+        case "red":
+          img = <img className="iconC_img" src={carr_r}/>;
+          break;
+        case "blue":
+          img = <img className="iconC_img" src={carr_a}/>;
+          break;
+        case "green":
+          img = <img className="iconC_img" src={carr_v}/>;
+          break;
+        case "white":
+          img = <img className="iconC_img" src={carr_b}/>;
+          break;
+        default:
+          alert("ERROR EN showCarr: "+color);
+          break;
+      }
+
+      return img;
+    }
+
+    
+
     //Coge las cartas de rss del jugador y las muestra por pantalla
 
     let playerCards = [];
@@ -560,25 +707,25 @@ export default function Board(props) {
       </div>
       <div className="acciones"> 
         <div className="icon" id="throwDice" onClick={() => ithrowDice()}>
-            tDice
+            <img className= "icon_img" src={dices}/>
         </div>
         <div className="icon" id="buildSet" onClick={() => showCirInter("settlement")}>
-            buildS
+          {showSet()}
         </div>
         <div className="icon" id="buildCity" onClick={() => showCirInter("city")}>
-            buildC
+          {showCity()}
         </div>
         <div className="icon" id="buildRoad"  onClick={() => showCirCarr()}>
-            buildR
+          {showCarr()}
         </div>
         <div className="icon" id="buyDev" onClick={() => ibuyDevCard()}>
-            buyDev
+          <img className= "icon_img" src={buy_dev}/>
         </div>
-        <div className="icon" id="trade" >
-            trade
+        <div className="icon" id="trade" onClick={() => showTradePop()}>
+          <img className= "icon_img" src={trade}/>
         </div>
         <div className="icon" id="endTurn" onClick={() => iendTurn()}>
-            endTurn
+          <img className= "icon_img" src={end}/>
         </div> 
       </div>
     </div>;
@@ -946,6 +1093,10 @@ export default function Board(props) {
     let city_r_arr = [];
 
     function chooseBuild(i){
+    //ESTADO: TERMINADA SIN REVISAR
+    //TO-DO: 
+    //FUNCION: Llama a construir poblado o ciudad segun el momento
+
       if(typeBuild === "settlement")
         ibuildSettlement(i);
       else if(typeBuild === "city")
@@ -1081,6 +1232,9 @@ export default function Board(props) {
         {city_a_arr}
         {city_r_arr}
         {city_v_arr}
+
+        {tradePopUp}
+        {bgPop}
 
         <img className="img_city" id="testImg" src={city_a} alt="img test"/>
       </div>

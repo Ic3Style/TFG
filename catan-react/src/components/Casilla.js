@@ -53,27 +53,21 @@ function Casilla (props)  {
                 clase = "_1";
                 break;
             case "Hills": //brick
-                //color = {backgroundColor: "#C28E7B"};
                 clase = "_2";
                 break;
             case "Mountains": //ore
-                //color = {backgroundColor: "#D1D1D1"};
                 clase = "_3";
                 break;
             case "Fields": //grain
-                //color = {backgroundColor: "#FEFE43"};
                 clase = "_4";
                 break;
             case "Forest": //lumber
-               //color = {backgroundColor: "#31832D"};
                clase = "_5";
                 break;
             case "Dessert":
-                //color = {backgroundColor:"#D1C388"};
                 clase = "_0";
                 break;
             default:
-                //color = {backgroundColor:"white" };
                 break;        
         }
         return clase;
