@@ -43,6 +43,7 @@ import dices from "./assets/images/dices.png";
 import end from "./assets/images/end.png";
 import trade from "./assets/images/trade.png";
 import buy_dev from "./assets/images/buyDev.png";
+import robber from "./assets/images/robber.png";
 
 import Casilla from "./components/Casilla";
 import { getName } from 'domutils';
@@ -181,6 +182,7 @@ export function setImgCity(G, ctx, id){
   img.style.left = left+17+"px";
   img.style.top = top+8+"px";
 }
+ 
 
 export default function Board(props) {
     const [arrInter, setArrInter] = useState(["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"]);
@@ -654,8 +656,6 @@ export default function Board(props) {
 
       return img;
     }
-
-    
 
     //Coge las cartas de rss del jugador y las muestra por pantalla
 
@@ -1201,6 +1201,19 @@ export default function Board(props) {
           )
             
         })} */
+
+    //Actualiza la posicion del ladron constantemente segun se encuentre
+
+    let ladron = <img className="robber" id="robber" src={robber}/>
+    let rPos = props.G.robberPos;
+    let rHex = document.getElementById(rPos);
+    let robImg = document.getElementById("robber");
+  
+    let rleft = rHex.getBoundingClientRect().left;
+    let rtop = rHex.getBoundingClientRect().top;
+  
+    robImg.style.left = rleft + 42 +"px";
+    robImg.style.top = rtop + 12 +"px";
     
     return (
       <div>
@@ -1235,6 +1248,9 @@ export default function Board(props) {
 
         {tradePopUp}
         {bgPop}
+        
+        {ladron}
+        
 
         <img className="img_city" id="testImg" src={city_a} alt="img test"/>
       </div>

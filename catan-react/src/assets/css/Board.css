@@ -462,3 +462,16 @@
     background-color: black;
     opacity: 70%;
  }
+
+
+ /*-----------------*/
+ /*LADRON*/
+
+ .robber{
+   height: 70px;
+   width: auto;
+   position: absolute;
+
+   top: 12.5%;
+   left: 26.3%;
+ }

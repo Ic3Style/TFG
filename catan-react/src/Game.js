@@ -3,7 +3,7 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 //import { Location } from "./Location.js";
 import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
-import { setImgRoad , setImgSet , setImgCity }  from './Board';
+import { setImgRoad , setImgSet , setImgCity}  from './Board';
 
 //FINAL TO_DO: Exportar los datos de cada turno a un txt.
 
