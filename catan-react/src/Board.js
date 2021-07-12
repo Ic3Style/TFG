@@ -182,8 +182,21 @@ export function setImgCity(G, ctx, id){
   img.style.top = top+8+"px";
 }
 
+export function showSPlayerPop(){
+  let pop = document.getElementById("pop_selectP");
+  let bg = document.getElementById("bg_pop");
 
- 
+  pop.style.display = "flex";
+  bg.style.display = "flex";
+}
+
+export function hideSPlayerPop(){
+  let pop = document.getElementById("pop_selectP");
+  let bg = document.getElementById("bg_pop");
+
+  pop.style.display = "none";
+  bg.style.display = "none";
+}
 
 export default function Board(props) {
     const [arrInter, setArrInter] = useState(["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"]);
@@ -553,11 +566,15 @@ export default function Board(props) {
       hideCirCarr();
       hideCirInter();
 
-      let elem = document.getElementById("tradePopUp");
-      elem.style.display = "flex";
+      if(props.ctx.phase === "play"){
+        let elem = document.getElementById("tradePopUp");
+        elem.style.display = "flex";
+  
+        let bg = document.getElementById("bg_pop");
+        bg.style.display = "flex";
+      }
 
-      let bg = document.getElementById("bg_pop");
-      bg.style.display = "flex";
+
     }
 
     function cancelTradePop() {
@@ -1056,7 +1073,7 @@ export default function Board(props) {
       </div>
       <div className="fila_Info" id="lRoad_info">
         <div className="columna_Info" id="lRoadCard">
-            <img  className = "card_Info" src={card_lArmy} alt="Carta de mayor ejercito"/>
+            <img  className = "card_Info" src={card_lRoad} alt="Carta de mayor ejercito"/>
         </div>
         <div className="columna_Info" id="special_info" style={{color: "red"}}>
           {getLRoad(0)}
@@ -1073,7 +1090,7 @@ export default function Board(props) {
       </div> 
       <div className="fila_Info" id="lArmy_info">
         <div className="columna_Info" id="lArmyCard">
-          <img  className = "card_Info" src={card_lRoad} alt="Carta de mayor carretera"/>
+          <img  className = "card_Info" src={card_lArmy} alt="Carta de mayor carretera"/>
         </div>
         <div className="columna_Info" id="special_info" style={{color: "red"}}>
           {getArmy(0)}
@@ -1090,7 +1107,7 @@ export default function Board(props) {
         </div>         
     </div>
 
-    
+    // CASILLAS
     for (let i = 0; i < 5; i++) {
 
       let cells = [];
@@ -1283,6 +1300,18 @@ export default function Board(props) {
 
     // DIV para seleccionar robar a un jugador
 
+    let optionPlayers = [];
+    for(let i=0; i<props.ctx.numPlayers; i++){
+      let option = <div className = "selectOption" id={`option_${i}`} onClick={() => props.moves.stealRssFromRobber(props.G.players[i].name)}>{props.G.players[i].name}</div>
+
+      optionPlayers.push(option);
+    }
+
+    let selectPlayer = 
+    <div className="selectContainer" id="pop_selectP">
+      <h1 className="titulo_select">Selecciona un jugador para robarle</h1>
+      {optionPlayers}
+    </div>
     
     return (
       <div>
@@ -1315,6 +1344,8 @@ export default function Board(props) {
 
         {tradePopUp}
         {bgPop}
+
+        {selectPlayer}
         
         {ladron}
         

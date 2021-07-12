@@ -3,7 +3,7 @@ import { INVALID_MOVE } from 'boardgame.io/core';
 //import { Location } from "./Location.js";
 import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
-import { setImgRoad , setImgSet , setImgCity}  from './Board';
+import { setImgRoad , setImgSet , setImgCity , showSPlayerPop, hideSPlayerPop}  from './Board';
 
 //FINAL TO_DO: Exportar los datos de cada turno a un txt.
 
@@ -93,7 +93,8 @@ export const Catan = {
               },
               placeRobber: {
                 moves: { 
-                  placeRobber, 
+                  placeRobber,
+                  stealRssFromRobber, 
                 },
                 moveLimit: 1,
               }
@@ -111,8 +112,7 @@ export const Catan = {
             useMonopoly,
             useRoadBuild,
             tradeBank,
-
-            placeRobber,
+            showSPlayerPop,
             
             addRss: (G, ctx, num) => { //ADMIN ACTION
 
@@ -224,6 +224,7 @@ export const Catan = {
   function placeRobber(G, ctx, id){
 
     let cPlayer = G.players[ctx.currentPlayer];
+    G.selectPlayers = [];
 
     if(id !== G.robberPos){
 
@@ -231,9 +232,34 @@ export const Catan = {
       G.terrainCells[id].robber = true;
       G.robberPos = id;
       console.log("El jugador "+cPlayer.name+" coloca el ladron en: "+id);
-      stealRssFromRobber(G,ctx,id);
 
-      ctx.events.endStage()
+      //let possiblePlayers = [];
+      //let possiblePlayersNames = [];
+
+      for(let i = 0; i< ctx.numPlayers; i++){ //mete a los jugadores cercanos en el arra possiblePlayers
+        if(cPlayer !== G.players[i]){
+          let auxPlayer = G.players[i];
+          let added = false;
+          for(let j = 0; j<auxPlayer.ownedTiles.length; j++){
+            if(auxPlayer.ownedTiles[j].id === id && !added){
+              //possiblePlayers.push(auxPlayer);
+              //possiblePlayersNames.push(auxPlayer.name);
+              G.selectPlayers.push(auxPlayer);
+              added = true;
+            }
+          }
+        }
+      }
+
+      if(G.selectPlayers.length === 0){
+        console.log("No hay jugadores al lado del ladron, por lo que no se roba ninguna carta");
+        ctx.events.endStage()
+      }
+      else{
+        showSPlayerPop();
+      }
+
+      //stealRssFromRobber(G,ctx,id);
     }
     else
      alert("No puedes dejar el ladron en la misma casilla")
@@ -290,55 +316,42 @@ export const Catan = {
     }
   }
 
-  function stealRssFromRobber(G, ctx, id){
+  function stealRssFromRobber(G, ctx, playerN){
     //ESTADO: TERMINADO SIN REVISAR
     //FUNCION: Roba una carta a un jugador, si hay, coolindante al ladron
+      
+    let found = -1;
 
-    let cPlayer = G.players[ctx.currentPlayer];
-    let possiblePlayers = [];
-    let possiblePlayersNames = [];
+    let playerNames = [];
 
-    for(let i = 0; i< ctx.numPlayers; i++){ //mete a los jugadores cercanos en el arra possiblePlayers
-      if(cPlayer !== G.players[i]){
-        let auxPlayer = G.players[i];
-        let added = false;
-        for(let j = 0; j<auxPlayer.ownedTiles.length; j++){
-          if(auxPlayer.ownedTiles[j].id === id && !added){
-            possiblePlayers.push(auxPlayer);
-            possiblePlayersNames.push(auxPlayer.name);
-            added = true;
-          }
-        }
-      }
+    for(let i=0; i<G.selectPlayers.length; i++){
+      let name = G.selectPlayers[i].name;
+      playerNames.push(name);
     }
 
-    if(possiblePlayers.length === 0){
-      console.log("No hay jugadores al lado del ladron, por lo que no se roba ninguna carta");
+
+    found = playerNames.indexOf(playerN);
+
+    if(found === -1){
+      alert("Jugador no valido, prueba otra vez");
+      return;
     }
     else{
       
-      let found = -1;
-      let sel;
-
-      while(found === -1){
-        sel = prompt("Selecciona un jugador para robarle ("+possiblePlayersNames.toString()+"): ");
-        found = possiblePlayersNames.indexOf(sel);
-
-        if(found === -1)
-          alert("Jugador no valido, prueba otra vez");
-      }
-
-      let selPlayer = possiblePlayers[found];
-
-      if(countCards(selPlayer)>0){
-        selectRandomCard(G,ctx,selPlayer);
-      }
-      else{
-        alert("El jugador elegido no tiene cartas, mala suerte");
-      }
-
     }
 
+    let id_selPlayer = G.selectPlayers[found].id;
+    let selPlayer = G.players[id_selPlayer]
+    hideSPlayerPop();
+
+    if(countCards(selPlayer)>0){
+      selectRandomCard(G,ctx,selPlayer);
+    }
+    else{
+      alert("El jugador elegido no tiene cartas, mala suerte");
+    }
+
+    ctx.events.endStage()
   }
 
   function endTurn(G, ctx){
@@ -1579,6 +1592,7 @@ export const Catan = {
     for(let i=0; i<ctx.numPlayers; i++){
       let newPlayer = {
         //name : askName(i),
+        id: i,
         name : "player_"+i,
         color : getColour(i),
         points : 0,
@@ -1651,6 +1665,7 @@ export const Catan = {
         longestRoadId: -1,
         largestArmyId: -1,
         devCardUsed: false,
+        selectPlayers: [],
 
         players: getPlayers,
 
@@ -1688,12 +1703,12 @@ export const Catan = {
       let playerID = 'player_' + i;
       let cPlayer = G[playerID];
       */
-      //alert(ctx.currentPlayer);
-      let cPlayer = G.players[ctx.currentPlayer];
+      let cPlayer = G.players[i];
   
       if (cPlayer.points >= 10){
         finish = true;
         alert("El jugador "+ i +" ha conseguido 10 puntos, se acabo")
+        break;
       }
     }
   

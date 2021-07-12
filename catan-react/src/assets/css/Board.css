@@ -226,7 +226,7 @@
    display: none;
 
    position: absolute;
-   z-index: 40;
+   z-index: 5;
 
    transform: rotate(90deg);
  }
@@ -347,17 +347,17 @@
   background-color: white;
  }
 
- #blue_color:hover{
+ #blue_color:hover, #option_1:hover{
   
   background-color: rgb(129, 129, 255)
  }
- #green_color:hover{
+ #green_color:hover, #option_2:hover{
   background-color: rgb(65, 133, 65);
  }
- #red_color:hover{
+ #red_color:hover , #option_0:hover{
   background-color: rgb(255, 125, 125);
  }
- #white_color:hover{
+ #white_color:hover, #option_3:hover{
   background-color: rgb(133, 133, 133);
  }
 
@@ -400,7 +400,7 @@
     position: absolute;
     height: 250px;
     width: 400px;
-    z-index: 10;
+    z-index: 11;
 
     display: none;
     align-items: center;
@@ -463,6 +463,79 @@
  }
 
  /*-----------------*/
+ /*SELECT POP*/
+
+ .selectContainer{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    height: 250px;
+    width: fit-content;
+
+    padding-left: 5%;
+    padding-right: 5%;
+
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+
+    top: 35%;
+    left: 35%;
+
+    border: 3px solid black;
+    border-radius: 3%;
+
+    background-color: var(--main-color);
+  }
+
+  .selectOption{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 25%;
+    width: 75px;
+    margin: 10%;
+    margin-top: 25%;
+    padding: 1%;
+
+    background-color: white;
+
+    border: 3px solid black;
+    border-radius: 3%;
+
+    font: 100% sans-serif;
+    font-weight: 700;
+  }
+
+  .selectOption:hover{
+    background-color: var(--hover-color);
+  }
+
+  #option_0{
+    background-color: red;
+  }
+  #option_1{
+    background-color: blue;
+  }
+  #option_2{
+    background-color: green;
+  }
+  #option_3{
+    background-color: white;
+  }
+
+  .titulo_select{
+    position: absolute;
+    top: 10%;
+
+    font: 140% sans-serif;
+    font-weight: 750;
+  }
+
+ /*-----------------*/
  /*BG POP*/
 
  .bgPop{
@@ -473,6 +546,7 @@
     width: 100%;
     top: 0;
     left: 0;
+    z-index: 10;
 
     background-color: black;
     opacity: 70%;
@@ -486,6 +560,7 @@
    height: 74px;
    width: auto;
    position: absolute;
+   z-index: 5;
 
    top: 12.5%;
    left: 26.3%;
