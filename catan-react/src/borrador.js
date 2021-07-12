@@ -445,3 +445,43 @@ function shuffle (array) {
     width: 0;
     border-top: 43.30px solid #64C7CC;
   }*/
+
+  /*
+  function placeRobber(G, ctx){
+    //ESTADO: EN PROCESO
+    //TO:DO: INTERFAZ GRAFICA DE ELEGIR CASILLA
+    //FUNCION: Mueve al ladron a la casilla que elijas y roba una carta a algun jugador coolindante
+
+    let cPlayer = G.players[ctx.currentPlayer];
+
+    let finished = false;
+    
+    while(!finished){
+      //TO-DO?: ESTO SOLO DEBERIA APARECERLE AL JUGADOR ACTUAL
+      let newID = prompt("¿A que casilla quiere mover el ladron?")
+
+      newID = parseInt(newID);
+      while(newID >18 || newID<0){
+        alert("Numero de casilla no valido");
+        newID = prompt("¿A que casilla quiere mover el ladron?")
+        newID = parseInt(newID);
+      }
+      
+      if(newID !== G.robberPos){
+
+        finished = true;
+        G.terrainCells[G.robberPos].robber = false;
+        G.terrainCells[newID].robber = true;
+        G.robberPos = newID;
+        console.log("El jugador "+cPlayer.name+" coloca el ladron en: "+newID);
+
+        stealRssFromRobber(G,ctx,newID);
+
+      }
+      else{
+        alert("No puedes dejar el ladron en la misma casilla")
+      }
+    }
+
+  }
+*/

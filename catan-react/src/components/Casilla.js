@@ -3,7 +3,7 @@ import "../assets/css/Casilla.css";
 
 function Casilla (props)  {
     const [arrVer, setstate] = useState([]);
-    function moveElement(e){
+    function moveElement(e){ //no se usa
         console.log("KEY", e);
 
         /*
@@ -89,14 +89,15 @@ function Casilla (props)  {
         else s = n;
         return s;
     }
+
     
     //{ state}
 
     return (
 
-            <td style={setColor(props.tile)} className={`hexagon extraColor${setClassToExtra(props.tile)}`}  id={props.uniqueID}  key={`hex_${props.uniqueID}`} onClick={(e)=>{moveElement(e)}}> 
+            <td style={setColor(props.tile)} className={`hexagon extraColor${setClassToExtra(props.tile)}`}  id={props.uniqueID}  key={`hex_${props.uniqueID}`}> 
                   {<div className="numberContainer">
-                      <div className="circleNumber">
+                      <div className="circleNumber" onClick={()=> props.clickF(props.uniqueID)}>
                           <b className="number" id={`number${setRedNumbers(props.idNumber)}`}>{extractDessert(props.idNumber)}</b>
                       </div>
                     </div>}

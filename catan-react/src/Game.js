@@ -91,6 +91,12 @@ export const Catan = {
                 },
                 moveLimit: 1,
               },
+              placeRobber: {
+                moves: { 
+                  placeRobber, 
+                },
+                moveLimit: 1,
+              }
             },
             //TO-DO: Faltaria stage de comercio de jugadores
           },
@@ -105,6 +111,8 @@ export const Catan = {
             useMonopoly,
             useRoadBuild,
             tradeBank,
+
+            placeRobber,
             
             addRss: (G, ctx, num) => { //ADMIN ACTION
 
@@ -213,6 +221,126 @@ export const Catan = {
 
   //FUNCIONES DE ACCIONES DEL JUEGO
 
+  function placeRobber(G, ctx, id){
+
+    let cPlayer = G.players[ctx.currentPlayer];
+
+    if(id !== G.robberPos){
+
+      G.terrainCells[G.robberPos].robber = false;
+      G.terrainCells[id].robber = true;
+      G.robberPos = id;
+      console.log("El jugador "+cPlayer.name+" coloca el ladron en: "+id);
+      stealRssFromRobber(G,ctx,id);
+
+      ctx.events.endStage()
+    }
+    else
+     alert("No puedes dejar el ladron en la misma casilla")
+  }
+
+  function selectRandomCard(G,ctx, selPlayer){
+    //ESTADO: TERMINADO SIN REVISAR
+    //FUNCION: Traspasa un recurso al azar de selPlayer al jugador actual
+
+    let cPlayer = G.players[ctx.currentPlayer];
+
+    let keys = Object.keys(selPlayer.resources);
+    let values = Object.values(selPlayer.resources);
+    let mixDeck = [];
+
+    for(let i = 0; i< keys.length; i++){
+      for(let j=0; j<values[i]; j++){
+        mixDeck.push(keys[i])
+      }
+    }
+
+    mixDeck = shuffle(mixDeck);
+    //console.log("Mix Deck: "+mixDeck);
+
+    let card = mixDeck[0];
+    switch(card){
+      case "ore":
+        selPlayer.resources.ore--;
+        cPlayer.resources.ore++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de ore de "+selPlayer.name);    
+        break;
+      case "grain": 
+        selPlayer.resources.grain--;
+        cPlayer.resources.grain++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de grain de "+selPlayer.name);
+        break;
+      case "wool":
+        selPlayer.resources.wool--;
+        cPlayer.resources.wool++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de wool de "+selPlayer.name);
+        break;
+      case "brick":
+        selPlayer.resources.brick--;
+        cPlayer.resources.brick++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de brick de "+selPlayer.name);
+        break;
+      case "lumber":
+        selPlayer.resources.lumber--;
+        cPlayer.resources.lumber++;
+        console.log("El jugador: "+cPlayer.name+ " roba 1 de lumber de "+selPlayer.name);
+        break;
+      default:
+        throw new Error("Non existing rss in function selectRandomCard");
+    }
+  }
+
+  function stealRssFromRobber(G, ctx, id){
+    //ESTADO: TERMINADO SIN REVISAR
+    //FUNCION: Roba una carta a un jugador, si hay, coolindante al ladron
+
+    let cPlayer = G.players[ctx.currentPlayer];
+    let possiblePlayers = [];
+    let possiblePlayersNames = [];
+
+    for(let i = 0; i< ctx.numPlayers; i++){ //mete a los jugadores cercanos en el arra possiblePlayers
+      if(cPlayer !== G.players[i]){
+        let auxPlayer = G.players[i];
+        let added = false;
+        for(let j = 0; j<auxPlayer.ownedTiles.length; j++){
+          if(auxPlayer.ownedTiles[j].id === id && !added){
+            possiblePlayers.push(auxPlayer);
+            possiblePlayersNames.push(auxPlayer.name);
+            added = true;
+          }
+        }
+      }
+    }
+
+    if(possiblePlayers.length === 0){
+      console.log("No hay jugadores al lado del ladron, por lo que no se roba ninguna carta");
+    }
+    else{
+      
+      let found = -1;
+      let sel;
+
+      while(found === -1){
+        sel = prompt("Selecciona un jugador para robarle ("+possiblePlayersNames.toString()+"): ");
+        found = possiblePlayersNames.indexOf(sel);
+
+        if(found === -1)
+          alert("Jugador no valido, prueba otra vez");
+      }
+
+      let selPlayer = possiblePlayers[found];
+
+      if(countCards(selPlayer)>0){
+        selectRandomCard(G,ctx,selPlayer);
+      }
+      else{
+        alert("El jugador elegido no tiene cartas, mala suerte");
+      }
+
+    }
+
+  }
+
   function endTurn(G, ctx){
     //ESTADO: TERMINADA REVISADA
     //FUNCION: Termina el turno e inicia de nuevo la fase de dados para el siguiente jugador
@@ -319,14 +447,12 @@ export const Catan = {
     let cPlayer = G.players[ctx.currentPlayer];
     let lastBuild = cPlayer.settlements[cPlayer.settlements.length-1];
 
-    let str = JSON.stringify(lastBuild, null, 4); // (Optional) beautiful indented output.
+    let str = JSON.stringify(lastBuild, null, 4); // beautiful indented output.
     console.log(str); 
 
     for(let j=0; j<lastBuild.tiles.length; j++){
       let tileID = lastBuild.tiles[j];
       let newRSS = G.terrainCells[tileID].rss;
-
-      //alert("NewRSS: "+newRSS);
 
       switch(newRSS){
         case "ore":
@@ -375,7 +501,8 @@ export const Catan = {
     if(numberDice === 7){
       
       checkDiscard(G, ctx);
-      placeRobber(G, ctx);
+      alert("Seleccione donde colocar el ladron clickando en la casilla correspondiente")
+      ctx.events.setActivePlayers({currentPlayer: 'placeRobber'});
 
     }
     else{
@@ -435,9 +562,8 @@ export const Catan = {
 
       }
 
+      ctx.events.endStage();
     }
-
-    ctx.events.endStage();
 
   }
 
@@ -771,160 +897,6 @@ export const Catan = {
     return false; 
   }
 
-  function selectRandomCard(G,ctx, selPlayer){
-    //ESTADO: TERMINADO SIN REVISAR
-    //FUNCION: Traspasa un recurso al azar de selPlayer al jugador actual
-
-    let cPlayer = G.players[ctx.currentPlayer];
-
-    let keys = Object.keys(selPlayer.resources);
-    let values = Object.values(selPlayer.resources);
-    let mixDeck = [];
-
-    for(let i = 0; i< keys.length; i++){
-      for(let j=0; j<values[i]; j++){
-        mixDeck.push(keys[i])
-      }
-    }
-
-    mixDeck = shuffle(mixDeck);
-    //console.log("Mix Deck: "+mixDeck);
-
-    let card = mixDeck[0];
-    switch(card){
-      case "ore":
-        selPlayer.resources.ore--;
-        cPlayer.resources.ore++;
-        console.log("El jugador: "+cPlayer.name+ " roba 1 de ore de "+selPlayer.name);    
-        break;
-      case "grain": 
-        selPlayer.resources.grain--;
-        cPlayer.resources.grain++;
-        console.log("El jugador: "+cPlayer.name+ " roba 1 de grain de "+selPlayer.name);
-        break;
-      case "wool":
-        selPlayer.resources.wool--;
-        cPlayer.resources.wool++;
-        console.log("El jugador: "+cPlayer.name+ " roba 1 de wool de "+selPlayer.name);
-        break;
-      case "brick":
-        selPlayer.resources.brick--;
-        cPlayer.resources.brick++;
-        console.log("El jugador: "+cPlayer.name+ " roba 1 de brick de "+selPlayer.name);
-        break;
-      case "lumber":
-        selPlayer.resources.lumber--;
-        cPlayer.resources.lumber++;
-        console.log("El jugador: "+cPlayer.name+ " roba 1 de lumber de "+selPlayer.name);
-        break;
-      default:
-        throw new Error("Non existing rss in function selectRandomCard");
-    }
-  }
-
-  function stealRssFromRobber(G, ctx, id){
-    //ESTADO: TERMINADO SIN REVISAR
-    //FUNCION: Roba una carta a un jugador, si hay, coolindante al ladron
-
-    let cPlayer = G.players[ctx.currentPlayer];
-    let possiblePlayers = [];
-    let possiblePlayersNames = [];
-
-    for(let i = 0; i< ctx.numPlayers; i++){ //mete a los jugadores cercanos en el arra possiblePlayers
-      if(cPlayer !== G.players[i]){
-        let auxPlayer = G.players[i];
-        let added = false;
-        for(let j = 0; j<auxPlayer.ownedTiles.length; j++){
-          if(auxPlayer.ownedTiles[j].id === id && !added){
-            possiblePlayers.push(auxPlayer);
-            possiblePlayersNames.push(auxPlayer.name);
-            added = true;
-          }
-        }
-      }
-    }
-
-    if(possiblePlayers.length === 0){
-      console.log("No hay jugadores al lado del ladron, por lo que no se roba ninguna carta");
-    }
-    else{
-      
-      let found = -1;
-      let sel;
-
-      while(found === -1){
-        sel = prompt("Selecciona un jugador para robarle ("+possiblePlayersNames.toString()+"): ");
-        found = possiblePlayersNames.indexOf(sel);
-
-        if(found === -1)
-          alert("Jugador no valido, prueba otra vez");
-      }
-
-      let selPlayer = possiblePlayers[found];
-
-      if(countCards(selPlayer)>0){
-        selectRandomCard(G,ctx,selPlayer);
-      }
-      else{
-        alert("El jugador elegido no tiene cartas, mala suerte");
-      }
-
-    }
-
-  }
-
-  function setTerrainClickable(){
-    //HAY QUE CAMBIARLO
-    let elements = document.querySelectorAll('.hexagon');
-    for(let i=0; i<elements.length; i++){
-        //elements[i].style.display = "none";
-    }
-
-  }
-
-  function placeRobber(G, ctx){
-    //ESTADO: EN PROCESO
-    //TO:DO: INTERFAZ GRAFICA DE ELEGIR CASILLA
-    //FUNCION: Mueve al ladron a la casilla que elijas y roba una carta a algun jugador coolindante
-    /*
-    let playerID = 'player_' + ctx.currentPlayer;
-    let cPlayer = G[playerID];
-    */
-    let cPlayer = G.players[ctx.currentPlayer];
-
-    let finished = false;
-    
-    while(!finished){
-      //TO-DO?: ESTO SOLO DEBERIA APARECERLE AL JUGADOR ACTUAL
-      let newID = prompt("¿A que casilla quiere mover el ladron?")
-
-      setTerrainClickable();//MODIFICAR
-
-      newID = parseInt(newID);
-      while(newID >18 || newID<0){
-        alert("Numero de casilla no valido");
-        newID = prompt("¿A que casilla quiere mover el ladron?")
-        newID = parseInt(newID);
-      }
-      
-      if(newID !== G.robberPos){
-
-        finished = true;
-        G.terrainCells[G.robberPos].robber = false;
-        G.terrainCells[newID].robber = true;
-        G.robberPos = newID;
-        console.log("El jugador "+cPlayer.name+" coloca el ladron en: "+newID);
-
-        stealRssFromRobber(G,ctx,newID);
-
-      }
-      else{
-        alert("No puedes dejar el ladron en la misma casilla")
-      }
-    }
-
-  }
-
   function rssFromTile(tile){
     //ESTADO: TERMINADA REVISADA
     //FUNCION: Devuelve el recurso de la casilla de terreno correspondiente
@@ -1242,10 +1214,7 @@ export const Catan = {
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-    /*
-    let playerID = 'player_' + ctx.currentPlayer;
-    let cPlayer = G[playerID];
-    */
+
     let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
@@ -1262,7 +1231,8 @@ export const Catan = {
       console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Caballero");
     }
 
-    placeRobber(G, ctx);
+    alert("Seleccione donde colocar el ladron clickando en la casilla correspondiente")
+    ctx.events.setActivePlayers({currentPlayer: 'placeRobber'});
 
     cPlayer.usedKnights++;
     checkKnightLeader(G, ctx);

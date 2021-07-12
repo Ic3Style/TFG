@@ -2,8 +2,6 @@ import React ,{useState , useEffect}from 'react';
 import "./assets/css/Board.css";
 import { INVALID_MOVE } from 'boardgame.io/core';
 
-import testImg from "./assets/images/forest.png";
-
 import circulo from "./assets/images/circulo2.png";
 
 import card_brick from "./assets/images/card_brick.png";
@@ -44,6 +42,7 @@ import end from "./assets/images/end.png";
 import trade from "./assets/images/trade.png";
 import buy_dev from "./assets/images/buyDev.png";
 import robber from "./assets/images/robber.png";
+import deck from "./assets/images/deck.png";
 
 import Casilla from "./components/Casilla";
 import { getName } from 'domutils';
@@ -182,6 +181,8 @@ export function setImgCity(G, ctx, id){
   img.style.left = left+17+"px";
   img.style.top = top+8+"px";
 }
+
+
  
 
 export default function Board(props) {
@@ -580,16 +581,16 @@ export default function Board(props) {
 
       switch(color){
         case "red":
-          img = <img className="iconSC_img" src={pob_r}/>;
+          img = <img className="iconSC_img" src={pob_r} alt="Imagen de poblado piloto"/>;
           break;
         case "blue":
-          img = <img className="iconSC_img" src={pob_a}/>;
+          img = <img className="iconSC_img" src={pob_a} alt="Imagen de poblado piloto"/>;
           break;
         case "green":
-          img = <img className="iconSC_img" src={pob_v}/>;
+          img = <img className="iconSC_img" src={pob_v} alt="Imagen de poblado piloto"/>;
           break;
         case "white":
-          img = <img className="iconSC_img" src={pob_b}/>;
+          img = <img className="iconSC_img" src={pob_b} alt="Imagen de poblado piloto"/>;
           break;
         default:
           alert("ERROR EN showSet: "+color);
@@ -609,16 +610,16 @@ export default function Board(props) {
 
       switch(color){
         case "red":
-          img = <img className="iconSC_img" src={city_r}/>;
+          img = <img className="iconSC_img" src={city_r} alt="Imagen de ciudad piloto"/>;
           break;
         case "blue":
-          img = <img className="iconSC_img" src={city_a}/>;
+          img = <img className="iconSC_img" src={city_a} alt="Imagen de ciudad piloto"/>;
           break;
         case "green":
-          img = <img className="iconSC_img" src={city_v}/>;
+          img = <img className="iconSC_img" src={city_v} alt="Imagen de ciudad piloto"/>;
           break;
         case "white":
-          img = <img className="iconSC_img" src={city_b}/>;
+          img = <img className="iconSC_img" src={city_b} alt="Imagen de ciudad piloto"/>;
           break;
         default:
           alert("ERROR EN showCity: "+color);
@@ -638,16 +639,16 @@ export default function Board(props) {
 
       switch(color){
         case "red":
-          img = <img className="iconC_img" src={carr_r}/>;
+          img = <img className="iconC_img" src={carr_r} alt="Imagen de carretera piloto"/>;
           break;
         case "blue":
-          img = <img className="iconC_img" src={carr_a}/>;
+          img = <img className="iconC_img" src={carr_a} alt="Imagen de carretera piloto"/>;
           break;
         case "green":
-          img = <img className="iconC_img" src={carr_v}/>;
+          img = <img className="iconC_img" src={carr_v} alt="Imagen de carretera piloto"/>;
           break;
         case "white":
-          img = <img className="iconC_img" src={carr_b}/>;
+          img = <img className="iconC_img" src={carr_b} alt="Imagen de carretera piloto"/>;
           break;
         default:
           alert("ERROR EN showCarr: "+color);
@@ -707,7 +708,7 @@ export default function Board(props) {
       </div>
       <div className="acciones"> 
         <div className="icon" id="throwDice" onClick={() => ithrowDice()}>
-            <img className= "icon_img" src={dices}/>
+            <img className= "icon_img" src={dices} alt="Imagen de dados"/>
         </div>
         <div className="icon" id="buildSet" onClick={() => showCirInter("settlement")}>
           {showSet()}
@@ -719,13 +720,13 @@ export default function Board(props) {
           {showCarr()}
         </div>
         <div className="icon" id="buyDev" onClick={() => ibuyDevCard()}>
-          <img className= "icon_img" src={buy_dev}/>
+          <img className= "icon_img" src={buy_dev} alt="Imagen de carta dev"/>
         </div>
         <div className="icon" id="trade" onClick={() => showTradePop()}>
-          <img className= "icon_img" src={trade}/>
+          <img className= "icon_img" src={trade} alt="Imagen de trade"/>
         </div>
         <div className="icon" id="endTurn" onClick={() => iendTurn()}>
-          <img className= "icon_img" src={end}/>
+          <img className= "icon_img" src={end} alt="Imagen de fin turno"/>
         </div> 
       </div>
     </div>;
@@ -827,6 +828,26 @@ export default function Board(props) {
       return army;
     }
 
+    function getNCards(i){
+      //ESTADO: TERMINADA SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Devuelve el numero de cartas del jugador segun el id
+
+      let cPlayer = props.G.players[i];
+
+      if(cPlayer !== undefined){
+        var sumTotal = 0;
+        
+        for(var stat of Object.values(cPlayer['resources'])){
+          sumTotal = sumTotal+stat
+        }
+        
+        return sumTotal;
+      }
+
+      return 0;
+    }
+
     let tablaInfo =
     <div className ="tabla_Info">
       <div className="fila_Info" id="titulo_info">
@@ -873,6 +894,14 @@ export default function Board(props) {
             {getNumRoad(0)}
           </div>
         </div>
+        <div className="columna_Info" id="red_numCards">
+          <div className="parte_sup">
+            <img className = "icon_info" src={deck} alt="Imagen de cartas"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNCards(0)}
+          </div>
+        </div>
       </div>
       <div className="fila_Info" id="blue_info">
 
@@ -913,6 +942,14 @@ export default function Board(props) {
           </div>
           <div className="parte_inf" id="nombre_info">
             {getNumRoad(1)}
+          </div>
+        </div>
+        <div className="columna_Info" id="blue_numCards">
+          <div className="parte_sup">
+            <img className = "icon_info" src={deck} alt="Imagen de cartas"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNCards(1)}
           </div>
         </div>
       </div>
@@ -956,7 +993,15 @@ export default function Board(props) {
           <div className="parte_inf" id="nombre_info">
            {getNumRoad(2)}
           </div>
-        </div>     
+        </div> 
+        <div className="columna_Info" id="green_numCards">
+          <div className="parte_sup">
+            <img className = "icon_info" src={deck} alt="Imagen de cartas"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNCards(2)}
+          </div>
+        </div>    
       </div>
       <div className="fila_Info" id="white_info">
 
@@ -999,22 +1044,30 @@ export default function Board(props) {
             {getNumRoad(3)}
           </div>
         </div>
+        <div className="columna_Info" id="white_numCards">
+          <div className="parte_sup">
+            <img className = "icon_info" src={deck} alt="Imagen de cartas"/>
+          </div>
+          <div className="parte_inf" id="nombre_info">
+            {getNCards(3)}
+          </div>
+        </div>
       
       </div>
       <div className="fila_Info" id="lRoad_info">
         <div className="columna_Info" id="lRoadCard">
             <img  className = "card_Info" src={card_lArmy} alt="Carta de mayor ejercito"/>
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "red"}}>
           {getLRoad(0)}
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "blue"}}>
           {getLRoad(1)}
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "green"}}>
           {getLRoad(2)}
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "white"}}>
           {getLRoad(3)}
         </div>
       </div> 
@@ -1022,16 +1075,16 @@ export default function Board(props) {
         <div className="columna_Info" id="lArmyCard">
           <img  className = "card_Info" src={card_lRoad} alt="Carta de mayor carretera"/>
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "red"}}>
           {getArmy(0)}
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "blue"}}>
           {getArmy(1)}
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "green"}}> 
          {getArmy(2)}
         </div>
-        <div className="columna_Info" id="special_info">
+        <div className="columna_Info" id="special_info" style={{color: "white"}}>
           {getArmy(3)}
         </div>
         </div>         
@@ -1045,7 +1098,7 @@ export default function Board(props) {
         for (let j = 0; j < 3; j++) {   
 
           cells.push( 
-              <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile}/>
+            <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile}  ctx = {props.ctx} G = {props.G} clickF = {iplaceRobber}/>
           );
           uniqueID++;
         }
@@ -1053,15 +1106,15 @@ export default function Board(props) {
         for (let j = 0; j < 4; j++) {
 
           cells.push( 
-            <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile}/>
+            <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile} ctx = {props.ctx} G = {props.G} clickF = {iplaceRobber}/>
           );
           uniqueID++;
         }
       else{
         for (let j = 0; j < 5; j++) {
 
-              cells.push(
-              <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile}/>
+            cells.push(
+            <Casilla uniqueID={uniqueID} idNumber ={props.G.terrainCells[uniqueID].number} tile ={props.G.terrainCells[uniqueID].tile} ctx = {props.ctx} G = {props.G} clickF = {iplaceRobber}/>
           );
           uniqueID++;
         }
@@ -1191,8 +1244,6 @@ export default function Board(props) {
       )
     }
 
-    //document.getElementById('buttonLED'+id).setAttribute('onclick','writeLED(1,1)')
-
     /*          {
         arrInter?.map((element, index) =>{
 
@@ -1202,23 +1253,39 @@ export default function Board(props) {
             
         })} */
 
-    //Actualiza la posicion del ladron constantemente segun se encuentre
+    function iplaceRobber(id){
+      //ESTADO:   EN PROCESO
+      //TO-DO: 
+      //FUNCION: Ejecuta la accion de mover al ladron
 
-    let ladron = <img className="robber" id="robber" src={robber}/>
+      if(props.ctx.activePlayers !== null)
+        if(props.ctx.activePlayers[props.ctx.currentPlayer] === "placeRobber"){
+          props.moves.placeRobber(id)
+       }
+    }
+
+
+    //Actualiza la posicion del ladron constantemente segun se encuentre --- DA PROBLEMAS LA PRIMERA VEZ QUE SE RENDERIZA
     let rPos = props.G.robberPos;
     let rHex = document.getElementById(rPos);
-    let robImg = document.getElementById("robber");
-  
-    let rleft = rHex.getBoundingClientRect().left;
-    let rtop = rHex.getBoundingClientRect().top;
-  
-    robImg.style.left = rleft + 40 +"px";
-    robImg.style.top = rtop + 8 +"px";
+    let ladron = <img className="robber" id="robber" src={robber} alt="Imagen de ladron"/>
+    let robImg;
+
+    if(rHex !== null){
+      robImg = document.getElementById("robber");
+    
+      let rleft = rHex.getBoundingClientRect().left;
+      let rtop = rHex.getBoundingClientRect().top;
+    
+      robImg.style.left = rleft + 40 +"px";
+      robImg.style.top = rtop + 8 +"px";
+    }
+
+    // DIV para seleccionar robar a un jugador
+
     
     return (
       <div>
-
-      
 
         <table id="board">
           <tbody className={"tablero"}>{tbody}</tbody>
