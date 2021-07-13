@@ -565,3 +565,62 @@
    top: 12.5%;
    left: 26.3%;
  }
+
+ /*-----------------*/
+ /* POP UP RSS */
+
+ .rssContainer{
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  height: 250px;
+  width: 900px;
+
+  padding-left: 1%;
+  padding-right: 1%;
+
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+
+  top: 35%;
+  left: 25%;
+
+  border: 3px solid black;
+  border-radius: 2%;
+
+  background-color: var(--main-color);
+ }
+
+ .optionRSS{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 35%;
+  width: 90px;
+  margin: 5%;
+  margin-top: 11%;
+  padding: 1%;
+
+  background-color: white;
+
+  border: 3px solid black;
+  border-radius: 3%;
+ }
+
+ .optionRSS:hover{
+  background-color: var(--hover-color);
+ }
+
+ .img_rss_opt{
+   height: 100%;
+   width: auto;
+ }
+
+ .img_rss_opt:hover{
+  height: 110%;
+  width: auto;
+ }

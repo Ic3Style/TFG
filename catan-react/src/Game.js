@@ -1387,7 +1387,7 @@ export const Catan = {
     G.devCardUsed = true;
   }
 
-  function useMonopoly(G, ctx){
+  function useMonopoly(G, ctx, rss){
     //ESTADO: EN PROCESO
     //TO-DO: INTERFAZ PARA ELEGIR MATERIAL
     //FUNCION: Usa la carta de desarrollo monopolio
@@ -1396,10 +1396,7 @@ export const Catan = {
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-    /*
-    let playerID = 'player_' + ctx.currentPlayer;
-    let cPlayer = G[playerID];
-    */
+
     let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
@@ -1414,14 +1411,15 @@ export const Catan = {
     else{
       cPlayer.devCards.splice(cPlayer.devCards.indexOf("monopoly"),1);
     }
-
+    /*
     let newRSS = prompt("Elije: ore, grain, lumber, brick, wool");
 
     while(newRSS !== "ore" && newRSS !== "grain"  && newRSS !== "lumber" && newRSS !== "brick" && newRSS !== "wool")
       newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
 
     console.log("El jugador "+cPlayer.name+" usa carta de desarrollo Monopolio con el recurso: "+newRSS);
-    stealRssFromPlayers(cPlayer, G, ctx, newRSS);
+    */
+    stealRssFromPlayers(cPlayer, G, ctx, rss);
     G.devCardUsed = true;
   }
 

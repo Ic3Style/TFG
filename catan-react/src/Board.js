@@ -466,6 +466,33 @@ export default function Board(props) {
       }
     }
     
+    function showSRSSPop(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Muestra el pop up para elegir recurso
+
+      hideCirInter();
+      hideCirCarr();
+
+      let pop = document.getElementById("selectRSS");
+      let bg = document.getElementById("bg_pop");
+
+      bg.style.display = "flex";
+      pop.style.display = "flex";
+    }
+
+    function hideSRSSPop(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Cierra el pop up para elegir recurso
+
+      let pop = document.getElementById("selectRSS");
+      let bg = document.getElementById("bg_pop");
+
+      bg.style.display = "none";
+      pop.style.display = "none";
+    }
+
     function iendTurn() { 
       //ESTADO: EN PROCESO
       //TO-DO: 
@@ -521,13 +548,16 @@ export default function Board(props) {
       props.moves.useKnight()
     }
 
-    function iuseMonopoly(){
+    function iuseMonopoly(rss){
       //ESTADO: EN PROCESO
       //TO-DO: INTERFAZ
       //FUNCION: Ejecuta la accion USAR MONOPOLIO y hace desaparecer los circulos
       hideCirCarr();
       hideCirInter();
-      props.moves.useMonopoly()
+
+      props.moves.useMonopoly(rss)
+
+      hideSRSSPop();
     }
 
     function iuseInvent(){
@@ -704,7 +734,7 @@ export default function Board(props) {
       if(actCard === "knight")
         devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Knight_${i}`} alt="Carta caballero" src={card_knight} onClick={() => iuseKnight()}/>);
       else if(actCard === "monopoly")
-        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Monopoly_${i}`} alt="Carta monopolio" src={card_monopoly} onClick={() => iuseMonopoly()}/>);
+        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Monopoly_${i}`} alt="Carta monopolio" src={card_monopoly} onClick={() => showSRSSPop()}/>);
       else if(actCard === "invent")
         devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Invent_${i}`} alt="Carta invento" src={card_invent} onClick={() => iuseInvent()}/>);
       else
@@ -1312,6 +1342,26 @@ export default function Board(props) {
       <h1 className="titulo_select">Selecciona un jugador para robarle</h1>
       {optionPlayers}
     </div>
+
+    let selectRSS = 
+    <div className= "rssContainer" id="selectRSS">
+      <h1 className="titulo_select">Selecciona un recurso</h1>
+      <div className="optionRSS" id="brick_option" onClick = {() => iuseMonopoly("brick")}>
+        <img src={card_brick} className="img_rss_opt"/>
+      </div>
+      <div className="optionRSS" id="lumber_option">
+       <img src={card_lumber} className="img_rss_opt"  onClick = {() => iuseMonopoly("lumber")}/>
+      </div>
+      <div className="optionRSS" id="wool_option">
+       <img src={card_wool} className="img_rss_opt"  onClick = {() => iuseMonopoly("wool")}/>
+      </div>
+      <div className="optionRSS" id="grain_option">
+       <img src={card_grain} className="img_rss_opt"  onClick = {() => iuseMonopoly("grain")}/>
+      </div>
+      <div className="optionRSS" id="ore_option">
+       <img src={card_ore} className="img_rss_opt"  onClick = {() => iuseMonopoly("ore")}/>
+      </div>
+    </div>
     
     return (
       <div>
@@ -1346,6 +1396,7 @@ export default function Board(props) {
         {bgPop}
 
         {selectPlayer}
+        {selectRSS}
         
         {ladron}
         
