@@ -14,6 +14,7 @@ import card_knight from "./assets/images/card_knight.png";
 import card_invent from "./assets/images/card_invent.png";
 import card_monopoly from "./assets/images/card_monopoly.png";
 import card_vPoint from "./assets/images/card_vPoint1.png";
+import card_rBuild from "./assets/images/card_roadBuild.png";
 
 import carr_b from "./assets/images/carr_b2.png";
 import carr_a from "./assets/images/carr_a2.png";
@@ -569,6 +570,15 @@ export default function Board(props) {
       props.moves.useInvent()
     }
 
+    function iuseRBuild(){
+      //ESTADO: EN PROCESO
+      //TO-DO: INTERFAZ
+      //FUNCION: Ejecuta la accion CARRETERAS y hace desaparecer los circulos
+      hideCirCarr();
+      hideCirInter();
+      props.moves.useRoadBuild()
+    }
+
     //Pop up general
     let bgPop =
     <div className="bgPop" id="bg_pop">
@@ -705,24 +715,25 @@ export default function Board(props) {
       return img;
     }
 
+
     //Coge las cartas de rss del jugador y las muestra por pantalla
 
     let playerCards = [];
 
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.brick; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Brick_${i}`} src={card_brick} alt="Carta ladrillo"/>);
+      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Brick_${i}`} src={card_brick} alt="Carta ladrillo" />);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.lumber; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Lumber_${i}`} src={card_lumber} alt="Carta madera"/>);
+      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Lumber_${i}`} src={card_lumber} alt="Carta madera" />);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.wool; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Wool_${i}`} src={card_wool} alt="Carta lana"/>);
+      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Wool_${i}`} src={card_wool} alt="Carta lana" />);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.ore; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Ore_${i}`} src={card_ore} alt="Carta mineral"/>);
+      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Ore_${i}`} src={card_ore} alt="Carta mineral" />);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.grain; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Grain_${i}`} src={card_grain} alt="Carta grano"/>);
+      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Grain_${i}`} src={card_grain} alt="Carta grano" />);
     }
 
     //Coge las cartas de dev del jugador y las muestra por pantalla
@@ -737,8 +748,10 @@ export default function Board(props) {
         devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Monopoly_${i}`} alt="Carta monopolio" src={card_monopoly} onClick={() => showSRSSPop()}/>);
       else if(actCard === "invent")
         devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Invent_${i}`} alt="Carta invento" src={card_invent} onClick={() => iuseInvent()}/>);
+      else if(actCard === "roadsBuild")
+        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}roadBuilds_${i}`} alt="Carta carreteras" src={card_rBuild} onClick={() => iuseRBuild()}/>);
       else
-      devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}vPoint_${i}`} alt="Carta victoria" src={card_vPoint} />);
+        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}vPoint_${i}`} alt="Carta victoria" src={card_vPoint} />);
     }
 
 
@@ -1219,25 +1232,25 @@ export default function Board(props) {
     //carreteras rojas
     for (let i = 0; i < 15; i++){
       carr_r_arr.push(
-        <img className="img_carr" id={`carrR_${i}`} src={carr_r} alt="Carretara roja"/>
+        <img className="img_carr" id={`carrR_${i}`} src={carr_r} alt="Carretera roja"/>
       );
     }
     //carreteras azules
     for (let i = 0; i < 15; i++){
       carr_a_arr.push(
-        <img className="img_carr" id={`carrA_${i}`} src={carr_a} alt="Carretara azul"/>
+        <img className="img_carr" id={`carrA_${i}`} src={carr_a} alt="Carretera azul"/>
       );
     }
     //carreteras verdes
     for (let i = 0; i < 15; i++){
       carr_v_arr.push(
-        <img className="img_carr" id={`carrV_${i}`} src={carr_v} alt="Carretara verde"/>
+        <img className="img_carr" id={`carrV_${i}`} src={carr_v} alt="Carretera verde"/>
       );
     }
     //carreteras blancas
     for (let i = 0; i < 15; i++){
       carr_b_arr.push(
-        <img className="img_carr" id={`carrB_${i}`} src={carr_b} alt="Carretara blanca"/>
+        <img className="img_carr" id={`carrB_${i}`} src={carr_b} alt="Carretera blanca"/>
       );
     }
 
@@ -1345,21 +1358,21 @@ export default function Board(props) {
 
     let selectRSS = 
     <div className= "rssContainer" id="selectRSS">
-      <h1 className="titulo_select">Selecciona un recurso</h1>
+      <h1 className="titulo_select">Selecciona un recurso para el monopolio</h1>
       <div className="optionRSS" id="brick_option" onClick = {() => iuseMonopoly("brick")}>
-        <img src={card_brick} className="img_rss_opt"/>
+        <img src={card_brick} className="img_rss_opt" alt="Rss de ladrillo"/>
       </div>
-      <div className="optionRSS" id="lumber_option">
-       <img src={card_lumber} className="img_rss_opt"  onClick = {() => iuseMonopoly("lumber")}/>
+      <div className="optionRSS" id="lumber_option" onClick = {() => iuseMonopoly("lumber")}>
+       <img src={card_lumber} className="img_rss_opt" alt="Rss de madera" />
       </div>
-      <div className="optionRSS" id="wool_option">
-       <img src={card_wool} className="img_rss_opt"  onClick = {() => iuseMonopoly("wool")}/>
+      <div className="optionRSS" id="wool_option" onClick = {() => iuseMonopoly("wool")}>
+       <img src={card_wool} className="img_rss_opt" alt="Rss de lana" />
       </div>
-      <div className="optionRSS" id="grain_option">
-       <img src={card_grain} className="img_rss_opt"  onClick = {() => iuseMonopoly("grain")}/>
+      <div className="optionRSS" id="grain_option" onClick = {() => iuseMonopoly("grain")}>
+       <img src={card_grain} className="img_rss_opt" alt="Rss de grano" />
       </div>
-      <div className="optionRSS" id="ore_option">
-       <img src={card_ore} className="img_rss_opt"  onClick = {() => iuseMonopoly("ore")}/>
+      <div className="optionRSS" id="ore_option" onClick = {() => iuseMonopoly("ore")}>
+       <img src={card_ore} className="img_rss_opt" alt="Rss de mineral" />
       </div>
     </div>
     

@@ -97,6 +97,12 @@ export const Catan = {
                   stealRssFromRobber, 
                 },
                 moveLimit: 1,
+              },
+              buildRoadCard: {
+                moves: { 
+                  buildRoad,
+                },
+                moveLimit: 2,
               }
             },
             //TO-DO: Faltaria stage de comercio de jugadores
@@ -112,7 +118,6 @@ export const Catan = {
             useMonopoly,
             useRoadBuild,
             tradeBank,
-            showSPlayerPop,
             
             addRss: (G, ctx, num) => { //ADMIN ACTION
 
@@ -242,8 +247,7 @@ export const Catan = {
           let added = false;
           for(let j = 0; j<auxPlayer.ownedTiles.length; j++){
             if(auxPlayer.ownedTiles[j].id === id && !added){
-              //possiblePlayers.push(auxPlayer);
-              //possiblePlayersNames.push(auxPlayer.name);
+
               G.selectPlayers.push(auxPlayer);
               added = true;
             }
@@ -384,7 +388,7 @@ export const Catan = {
 
   function checkDiscard(G,ctx){
     //ESTADO: TERMINADA SIN REVISAR
-    //FUNCION: Cada jugador se descarta de la mitad de sus cartas si tiene mas de 7
+    //FUNCION: Cada jugador se descarta de la mitad de sus cartas aleatoriamente si tiene mas de 7
 
     for(let i=0; i<ctx.numPlayers; i++){
       let cPlayer = G.players[i];
@@ -392,57 +396,58 @@ export const Catan = {
       let cPlayerCards = countCards(cPlayer);
 
       if(cPlayerCards > 7){
-        alert("El jugador "+cPlayer.name+" tiene "+cPlayerCards+" cartas, debe descartarse");
+        alert("El jugador "+cPlayer.name+" tiene "+cPlayerCards+" cartas, se descartará aleatoriamente de la mitad");
         console.log("El jugador "+cPlayer.name+" tiene mas de 7 cartas, debe descartarse");
-
+        
         let cardsLeft = Math.floor(cPlayerCards/2); //cartas que aun tiene que descartar
+        let rssList = ["brick", "wool", "grain", "ore", "lumber"];
+
         while(cardsLeft > 0){
           let valid = false;
           while(!valid){
-            let rssName = prompt("Te quedan "+cardsLeft+ " por elegir, elige (ore, lumber, grain, brick, wool):");
+            //let rssName = prompt("Te quedan "+cardsLeft+ " por elegir, elige (ore, lumber, grain, brick, wool):");
+
+            let random = Math.floor(Math.random() * rssList.length);
+            let rssName = rssList[random];
+
             switch(rssName){
               case "ore":
                 if(cPlayer.resources.ore > 0){
                   cPlayer.resources.ore--;
                   console.log("El jugador "+cPlayer.name+ " descarta 1 de ore");
                   valid = true;
-                }
-                else alert("No tienes de ese recurso!");        
+                }      
                 break;
               case "grain":
                 if(cPlayer.resources.grain > 0){
                   cPlayer.resources.grain--;
                   console.log("El jugador "+cPlayer.name+ " descarta 1 de grain");
                   valid = true;
-                }
-                else alert("No tienes de ese recurso!");            
+                }           
                 break;
               case "wool":
                 if(cPlayer.resources.wool > 0){
                   cPlayer.resources.wool--;
                   console.log("El jugador "+cPlayer.name+ " descarta 1 de wool");
                   valid = true;
-                }
-                else alert("No tienes de ese recurso!");            
+                }           
                 break;
               case "lumber":
                 if(cPlayer.resources.lumber > 0){
                   cPlayer.resources.lumber--;
                   console.log("El jugador "+cPlayer.name+ " descarta 1 de lumber");
                   valid = true;
-                }
-                else alert("No tienes de ese recurso!");            
+                }          
                 break;
               case "brick":
                 if(cPlayer.resources.brick > 0){
                   cPlayer.resources.brick--;
                   console.log("El jugador "+cPlayer.name+ " descarta 1 de brick");
                   valid = true;
-                }
-                else alert("No tienes de ese recurso!");            
+                }           
                 break;
               default:
-                alert("No existe ese recurso");
+                //alert("No existe ese recurso");
                 break;
             }
           }
@@ -766,6 +771,16 @@ export const Catan = {
     console.log("El jugador "+cPlayer.name+" construye una carretera en: "+id);
     cPlayer.resources.brick--;
     cPlayer.resources.lumber--;
+
+    if(ctx.activePlayers !== null)
+      if(ctx.activePlayers[ctx.currentPlayer] === "buildRoadCard"){
+        if(G.roadsToBuild === 1){
+          G.roadsToBuild--;
+          ctx.events.endStage();
+        }
+        else
+          G.roadsToBuild--;
+    }
 
   }
 
@@ -1256,10 +1271,7 @@ export const Catan = {
   function checkKnightLeader(G, ctx){
     //ESTADO: EN PROCESO
     //FUNCION: Comprueba si hay que cambiar la carta de mejor ejercito
-    /*
-    let playerID = 'player_' + ctx.currentPlayer;
-    let cPlayer = G[playerID];
-    */
+    
     let cPlayer = G.players[ctx.currentPlayer];
 
     //si la carta no ha sido reclamada por nadie
@@ -1298,17 +1310,14 @@ export const Catan = {
 
   function useInvent(G, ctx){
     //ESTADO: EN PROCESO
-    //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
+    //TO-DO: INTERFAZ PARA ELEGIR MATERIAL
     //FUNCION: Usa la carta de desarrollo invento
 
     if(G.devCardUsed === true){
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-    /*
-    let playerID = 'player_' + ctx.currentPlayer;
-    let cPlayer = G[playerID];
-    */
+
     let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
@@ -1324,6 +1333,7 @@ export const Catan = {
       cPlayer.devCards.splice(cPlayer.devCards.indexOf("invent"),1);
       console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Invento");
     }
+    
 
     for(let i=0; i<2; i++){
 
@@ -1383,13 +1393,14 @@ export const Catan = {
 
       }
     }
+    
 
     G.devCardUsed = true;
   }
 
   function useMonopoly(G, ctx, rss){
-    //ESTADO: EN PROCESO
-    //TO-DO: INTERFAZ PARA ELEGIR MATERIAL
+    //ESTADO: TERMINADO SIN REVISAR
+    //TO-DO: 
     //FUNCION: Usa la carta de desarrollo monopolio
 
     if(G.devCardUsed === true){
@@ -1495,17 +1506,14 @@ export const Catan = {
 
   function useRoadBuild(G, ctx){
     //ESTADO: EN PROCESO
-    //TO-DO: LIMITACION DE UNA CARTA DE DESARROLLO POR TURNO (FORO BOARDGAME), INTERFAZ PARA ELEGIR MATERIAL
+    //TO-DO: interfaz
     //FUNCION: Usa la carta de desarrollo carreteras
 
     if(G.devCardUsed === true){
       alert("Solo se puede usar una carta de desarrollo por turno");
       return INVALID_MOVE;
     }
-    /*
-    let playerID = 'player_' + ctx.currentPlayer;
-    let cPlayer = G[playerID];
-    */
+
     let cPlayer = G.players[ctx.currentPlayer];
 
     if(cPlayer.devCards.length === 0){
@@ -1522,6 +1530,12 @@ export const Catan = {
       console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Carreteras");
     }
 
+    alert("Debes construir dos carreteras con los recursos que se te han dado para continuar")
+    G.roadsToBuild = 2;
+    cPlayer.resources.brick += 2;
+    cPlayer.resources.lumber += 2;
+    ctx.events.setActivePlayers({currentPlayer: 'buildRoadCard'});
+    /*
     for(let i=0; i<2; i++){
       let valido = false;
       while(!valido){
@@ -1534,7 +1548,7 @@ export const Catan = {
             valido = true;
         }
       }
-    }
+    }*/
 
     G.devCardUsed = true;
   }
@@ -1664,6 +1678,7 @@ export const Catan = {
         largestArmyId: -1,
         devCardUsed: false,
         selectPlayers: [],
+        roadsToBuild: 0,
 
         players: getPlayers,
 
