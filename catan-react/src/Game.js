@@ -1308,7 +1308,7 @@ export const Catan = {
 
   }
 
-  function useInvent(G, ctx){
+  function useInvent(G, ctx, rss){
     //ESTADO: EN PROCESO
     //TO-DO: INTERFAZ PARA ELEGIR MATERIAL
     //FUNCION: Usa la carta de desarrollo invento
@@ -1330,72 +1330,71 @@ export const Catan = {
       return INVALID_MOVE;
     }
     else{
-      cPlayer.devCards.splice(cPlayer.devCards.indexOf("invent"),1);
-      console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Invento");
-    }
-    
-
-    for(let i=0; i<2; i++){
-
-      let newRSS = prompt("Elije: ore, grain, lumber, brick, wool");
-
-      while(newRSS !== "ore" && newRSS !== "grain"  && newRSS !== "lumber" && newRSS !== "brick" && newRSS !== "wool")
-        newRSS = prompt("No valido, elije: ore, grain, lumber, brick, wool");
-
-      switch(newRSS){
-        case "ore":
-          if(G.resourcesDeck.ore > 0){
-            cPlayer.resources.ore++;
-            G.resourcesDeck.ore--;
-          }
-          else{
-            alert("No queda mineral en el deck, por lo que no robas");
-          }
-          break;
-        case "grain":
-          if(G.resourcesDeck.grain > 0){
-            cPlayer.resources.grain++;
-            G.resourcesDeck.grain--;
-          }
-          else{
-            alert("No queda grano en el deck, por lo que no robas");
-          }
-          break;
-        case "wool":
-          if(G.resourcesDeck.wool > 0){
-            cPlayer.resources.wool++;
-            G.resourcesDeck.wool--;
-          }
-          else{
-            alert("No queda lana en el deck, por lo que no robas");
-          }
-          break;
-        case "brick":
-          if(G.resourcesDeck.brick > 0){
-            cPlayer.resources.brick++;
-            G.resourcesDeck.brick--;
-          }
-          else{
-            alert("No queda ladrillo en el deck, por lo que no robas");
-          }
-          break;
-        case "lumber":
-          if(G.resourcesDeck.lumber > 0){
-            cPlayer.resources.lumber++;
-            G.resourcesDeck.lumber--;
-          }
-          else{
-            alert("No queda madera en el deck, por lo que no robas");
-          }
-          break;
-        default:
-          throw new Error("Non existing rss in function useInvent");
-
+      if(G.countInvent === 1){
+        cPlayer.devCards.splice(cPlayer.devCards.indexOf("invent"),1);
+        console.log("El jugador "+cPlayer.name+" usa la carta de desarrollo de Invento");
       }
     }
-    
 
-    G.devCardUsed = true;
+    switch(rss){
+      case "ore":
+        if(G.resourcesDeck.ore > 0){
+          cPlayer.resources.ore++;
+          G.resourcesDeck.ore--;
+        }
+        else{
+          alert("No queda mineral en el deck, por lo que no robas");
+        }
+        break;
+      case "grain":
+        if(G.resourcesDeck.grain > 0){
+          cPlayer.resources.grain++;
+          G.resourcesDeck.grain--;
+        }
+        else{
+          alert("No queda grano en el deck, por lo que no robas");
+        }
+        break;
+      case "wool":
+        if(G.resourcesDeck.wool > 0){
+          cPlayer.resources.wool++;
+          G.resourcesDeck.wool--;
+        }
+        else{
+          alert("No queda lana en el deck, por lo que no robas");
+        }
+        break;
+      case "brick":
+        if(G.resourcesDeck.brick > 0){
+          cPlayer.resources.brick++;
+          G.resourcesDeck.brick--;
+        }
+        else{
+          alert("No queda ladrillo en el deck, por lo que no robas");
+        }
+        break;
+      case "lumber":
+        if(G.resourcesDeck.lumber > 0){
+          cPlayer.resources.lumber++;
+          G.resourcesDeck.lumber--;
+        }
+        else{
+          alert("No queda madera en el deck, por lo que no robas");
+        }
+        break;
+      default:
+        throw new Error("Non existing rss in function useInvent");
+
+    }
+    
+    if(G.countInvent === 1){
+      G.devCardUsed = true;
+      G.countInvent = 0;
+    }
+    else{
+      G.countInvent = 1;
+    }
+
   }
 
   function useMonopoly(G, ctx, rss){
@@ -1679,6 +1678,7 @@ export const Catan = {
         devCardUsed: false,
         selectPlayers: [],
         roadsToBuild: 0,
+        countInvent: 0,
 
         players: getPlayers,
 

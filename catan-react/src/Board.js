@@ -482,12 +482,42 @@ export default function Board(props) {
       pop.style.display = "flex";
     }
 
+    function showSRSSInvPop(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Muestra el pop up para elegir recurso de invento
+
+      hideCirInter();
+      hideCirCarr();
+
+      let pop = document.getElementById("selectRSSInv");
+      let bg = document.getElementById("bg_pop");
+
+      bg.style.display = "flex";
+      pop.style.display = "flex";
+    }
+
     function hideSRSSPop(){
       //ESTADO: TERMINADO SIN REVISAR
       //TO-DO: 
       //FUNCION: Cierra el pop up para elegir recurso
 
       let pop = document.getElementById("selectRSS");
+      let bg = document.getElementById("bg_pop");
+
+      bg.style.display = "none";
+      pop.style.display = "none";
+    }
+
+    function hideSRSSInvPop(){
+      //ESTADO: TERMINADO SIN REVISAR
+      //TO-DO: 
+      //FUNCION: Oculta el pop up para elegir recurso de invento
+
+      hideCirInter();
+      hideCirCarr();
+
+      let pop = document.getElementById("selectRSSInv");
       let bg = document.getElementById("bg_pop");
 
       bg.style.display = "none";
@@ -561,13 +591,22 @@ export default function Board(props) {
       hideSRSSPop();
     }
 
-    function iuseInvent(){
+    function iuseInvent(rss){
       //ESTADO: EN PROCESO
       //TO-DO: INTERFAZ
       //FUNCION: Ejecuta la accion USAR INVENTO y hace desaparecer los circulos
       hideCirCarr();
       hideCirInter();
-      props.moves.useInvent()
+      hideSRSSInvPop();
+      console.log("Count "+props.G.countInvent)
+      if(props.G.countInvent === 0){
+        props.moves.useInvent(rss)
+        showSRSSInvPop()
+      }
+      else{
+        props.moves.useInvent(rss)
+      }
+ 
     }
 
     function iuseRBuild(){
@@ -721,19 +760,19 @@ export default function Board(props) {
     let playerCards = [];
 
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.brick; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Brick_${i}`} src={card_brick} alt="Carta ladrillo" />);
+      playerCards.push( <abbr title="Ladrillo"><img className="rssCard" id={`c${props.ctx.currentPlayer}Brick_${i}`} src={card_brick} alt="Carta ladrillo" /></abbr>);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.lumber; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Lumber_${i}`} src={card_lumber} alt="Carta madera" />);
+      playerCards.push( <abbr title="Madera"><img className="rssCard" id={`c${props.ctx.currentPlayer}Lumber_${i}`} src={card_lumber} alt="Carta madera" /></abbr>);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.wool; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Wool_${i}`} src={card_wool} alt="Carta lana" />);
+      playerCards.push( <abbr title="Lana"><img className="rssCard" id={`c${props.ctx.currentPlayer}Wool_${i}`} src={card_wool} alt="Carta lana" /></abbr>);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.ore; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Ore_${i}`} src={card_ore} alt="Carta mineral" />);
+      playerCards.push( <abbr title="Mineral"><img className="rssCard" id={`c${props.ctx.currentPlayer}Ore_${i}`} src={card_ore} alt="Carta mineral" /></abbr>);
     }
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.grain; i++){
-      playerCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Grain_${i}`} src={card_grain} alt="Carta grano" />);
+      playerCards.push( <abbr title="Grano"><img className="rssCard" id={`c${props.ctx.currentPlayer}Grain_${i}`} src={card_grain} alt="Carta grano" /></abbr>);
     }
 
     //Coge las cartas de dev del jugador y las muestra por pantalla
@@ -743,15 +782,15 @@ export default function Board(props) {
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].devCards.length; i++){
       let actCard = props.G.players[props.ctx.currentPlayer].devCards[i];
       if(actCard === "knight")
-        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Knight_${i}`} alt="Carta caballero" src={card_knight} onClick={() => iuseKnight()}/>);
+        devCards.push( <abbr title="Carta de caballero"><img className="rssCard" id={`c${props.ctx.currentPlayer}Knight_${i}`} alt="Carta caballero" src={card_knight} onClick={() => iuseKnight()}/></abbr>);
       else if(actCard === "monopoly")
-        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Monopoly_${i}`} alt="Carta monopolio" src={card_monopoly} onClick={() => showSRSSPop()}/>);
+        devCards.push( <abbr title="Carta de monopolio"><img className="rssCard" id={`c${props.ctx.currentPlayer}Monopoly_${i}`} alt="Carta monopolio" src={card_monopoly} onClick={() => showSRSSPop()}/></abbr>);
       else if(actCard === "invent")
-        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}Invent_${i}`} alt="Carta invento" src={card_invent} onClick={() => iuseInvent()}/>);
+        devCards.push( <abbr title="Carta de invento"><img className="rssCard" id={`c${props.ctx.currentPlayer}Invent_${i}`} alt="Carta invento" src={card_invent} onClick={() => showSRSSInvPop()}/></abbr>);
       else if(actCard === "roadsBuild")
-        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}roadBuilds_${i}`} alt="Carta carreteras" src={card_rBuild} onClick={() => iuseRBuild()}/>);
+        devCards.push( <abbr title="Carta de carreteras"><img className="rssCard" id={`c${props.ctx.currentPlayer}roadBuilds_${i}`} alt="Carta carreteras" src={card_rBuild} onClick={() => iuseRBuild()}/></abbr>);
       else
-        devCards.push( <img className="rssCard" id={`c${props.ctx.currentPlayer}vPoint_${i}`} alt="Carta victoria" src={card_vPoint} />);
+        devCards.push( <abbr title="Punto de victoria"><img className="rssCard" id={`c${props.ctx.currentPlayer}vPoint_${i}`} alt="Carta victoria" src={card_vPoint} /></abbr>);
     }
 
 
@@ -1116,7 +1155,7 @@ export default function Board(props) {
       </div>
       <div className="fila_Info" id="lRoad_info">
         <div className="columna_Info" id="lRoadCard">
-            <img  className = "card_Info" src={card_lRoad} alt="Carta de mayor ejercito"/>
+          <abbr className = "card_Info" title="Carta de mayor carretera"><img  className = "card_Info" src={card_lRoad} alt="Carta de mayor carretera"/></abbr>
         </div>
         <div className="columna_Info" id="special_info" style={{color: "red"}}>
           {getLRoad(0)}
@@ -1133,7 +1172,7 @@ export default function Board(props) {
       </div> 
       <div className="fila_Info" id="lArmy_info">
         <div className="columna_Info" id="lArmyCard">
-          <img  className = "card_Info" src={card_lArmy} alt="Carta de mayor carretera"/>
+          <abbr className = "card_Info" title="Carta de mayor ejercito"><img className = "card_Info" src={card_lArmy} alt="Carta de mayor carretera"/></abbr>
         </div>
         <div className="columna_Info" id="special_info" style={{color: "red"}}>
           {getArmy(0)}
@@ -1375,6 +1414,26 @@ export default function Board(props) {
        <img src={card_ore} className="img_rss_opt" alt="Rss de mineral" />
       </div>
     </div>
+
+    let selectRSSInv = 
+    <div className= "rssContainer" id="selectRSSInv">
+      <h1 className="titulo_select">Selecciona un recurso para obtener una cartas</h1>
+      <div className="optionRSS" id="brick_option" onClick = {() => iuseInvent("brick")}>
+        <img src={card_brick} className="img_rss_opt" alt="Rss de ladrillo"/>
+      </div>
+      <div className="optionRSS" id="lumber_option" onClick = {() => iuseInvent("lumber")}>
+      <img src={card_lumber} className="img_rss_opt" alt="Rss de madera" />
+      </div>
+      <div className="optionRSS" id="wool_option" onClick = {() => iuseInvent("wool")}>
+      <img src={card_wool} className="img_rss_opt" alt="Rss de lana" />
+      </div>
+      <div className="optionRSS" id="grain_option" onClick = {() => iuseInvent("grain")}>
+      <img src={card_grain} className="img_rss_opt" alt="Rss de grano" />
+      </div>
+      <div className="optionRSS" id="ore_option" onClick = {() => iuseInvent("ore")}>
+      <img src={card_ore} className="img_rss_opt" alt="Rss de mineral" />
+      </div>
+    </div>
     
     return (
       <div>
@@ -1410,6 +1469,8 @@ export default function Board(props) {
 
         {selectPlayer}
         {selectRSS}
+
+        {selectRSSInv}
         
         {ladron}
         
