@@ -1,21 +1,16 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
-//import Player, { CatanPlayer } from "./Player.js";
-//import { Location } from "./Location.js";
 import { roadData } from "./roadData.js";
 import { placeData } from "./placeData.js";
 import { setImgRoad , setImgSet , setImgCity , showSPlayerPop, hideSPlayerPop}  from './Board';
 
 //FINAL TO_DO: Exportar los datos de cada turno a un txt.
 
-//IMPORTANT TO_DO: MODIFICAR TODAS LOS PROMPT PARA QUE SEA CLICKANDO CON LA INTERFAZ
-
-//GENERAL TO_DO: STAGE DE COMERCIO
+//GENERAL TO_DO: INTERFAZ COMERCIO BANCO
 //GENERAL TO_DO: LONGEST ROAD
 //GENERAL TO_DO: PUERTOS
 //GENERAL TO_DO: SISTEMA DE COMERCIO ENTRE PLAYERS
 
-//GENERAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
-
+//OPTIONAL TO_DO: No puedes usar una carta de desarrollo nada mas comprarla
 //OPTIONAL TO_DO: En caso de que no queden sitios para construir para un jugador
 //OPTIONAL TO_DO: TIRAR DADOS PARA VER QUIEN EMPIEZA
 //OPTIONAL TO-DO: ROTAR VPOINTS
