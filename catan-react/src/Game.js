@@ -8,7 +8,6 @@ import { setImgRoad , setImgSet , setImgCity , showSPlayerPop, hideSPlayerPop}  
 //FINAL TO_DO: Exportar los datos de cada turno a un txt.
 
 //IMPORTANT TO_DO: MODIFICAR TODAS LOS PROMPT PARA QUE SEA CLICKANDO CON LA INTERFAZ
-//IMPORTANT TO_DO: EL JUGADOR 2 (TERCERO) NO PUEDE TIRAR --> NO SE ACTIVA LA STAGE ----- PARECE QUE FUNCIONA LOL
 
 //GENERAL TO_DO: STAGE DE COMERCIO
 //GENERAL TO_DO: LONGEST ROAD
@@ -19,8 +18,7 @@ import { setImgRoad , setImgSet , setImgCity , showSPlayerPop, hideSPlayerPop}  
 
 //OPTIONAL TO_DO: En caso de que no queden sitios para construir para un jugador
 //OPTIONAL TO_DO: TIRAR DADOS PARA VER QUIEN EMPIEZA
-
-//DUDA: SE PUEDE CAMBIAR EL SISTEMA DE RECURSOS POR NUMEROS DEL 0 AL 4 PARA REFERIRSE A CADA RSS DENTRO DE LAS FUNCIONES?
+//OPTIONAL TO-DO: ROTAR VPOINTS
 
 
 export const Catan = {

@@ -1,22 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
+//import {useState} from 'react';
 import "../assets/css/Casilla.css";
 
 function Casilla (props)  {
-    const [arrVer, setstate] = useState([]);
-    function moveElement(e){ //no se usa
-        console.log("KEY", e);
-
-        /*
-        let element = document.getElementById(e.target.id);
-        let top = element.getBoundingClientRect().top;
-        let left = element.getBoundingClientRect().left;
-        let circuloImage = document.getElementById("circuloimg");
-        circuloImage.style.position = "absolute";
-        circuloImage.style.left = left - 30+'px';
-        circuloImage.style.top =  top - 30+'px';
-        console.log(top, left)
-        */
-    }
 
     function setColor(tile){
         let color;
@@ -89,9 +75,6 @@ function Casilla (props)  {
         else s = n;
         return s;
     }
-
-    
-    //{ state}
 
     return (
 

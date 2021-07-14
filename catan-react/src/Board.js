@@ -1,6 +1,5 @@
 import React ,{useState , useEffect}from 'react';
 import "./assets/css/Board.css";
-import { INVALID_MOVE } from 'boardgame.io/core';
 
 import circulo from "./assets/images/circulo2.png";
 
@@ -46,12 +45,11 @@ import robber from "./assets/images/robber.png";
 import deck from "./assets/images/deck.png";
 
 import Casilla from "./components/Casilla";
+/*
 import { getName } from 'domutils';
 import { func } from 'assert-plus';
 import { getDocumentMode } from 'parse5/lib/tree-adapters/default';
-
-//TO-DO: tabla con estado del juego
-//OPTIONAL TO-DO: ROTAR VPOINTS
+*/
 
 <script src= "Game.js"></script>
 
@@ -200,39 +198,7 @@ export function hideSPlayerPop(){
 }
 
 export default function Board(props) {
-    const [arrInter, setArrInter] = useState(["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"]);
-    const [arrCarr, setarrCarr] = useState(["o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o"]);
-    const [typeBuild, setBuild] = useState("");
-    /* useEffect(() => {
-          let arrayTemp=[];
-          for (let i=0; i<=5; i++){
-            for(let j=0; j<=3; j++){
-              arrayTemp.push("o")
-            }
-          }
-          setArrVertice(arrayTemp)
-     }, []);
-     useEffect(() => {
-        let arrayTemp=[];
-        for (let i=0; i<=5; i++){
-          for(let j=0; j<=3; j++){
-            arrayTemp.push("o")
-          }
-        }
-        setArrVertice(arrayTemp)
-      }, [state]);
-      */
-
-    function getCoords(){ //funcion no necesaria
-      //ESTADO: TERMINADO SIN REVISAR
-      //TO-DO: 
-      //FUNCION: Obtiente las coordenadas del primer hexagono del tablero
-
-      let element = document.getElementById(0);
-      let top = element.getBoundingClientRect().top;
-      let left = element.getBoundingClientRect().left;
-      console.log(top, left)
-    }
+   const [typeBuild, setBuild] = useState("");
 
     function ithrowDice(){
     //ESTADO: TERMINADO SIN REVISAR
@@ -624,7 +590,6 @@ export default function Board(props) {
     </div>
 
     //Pop up de trade
-
     let tradePopUp =
     <div className="tradeContainer" id="tradePopUp">
       <div className="tradeOption" id="tradeBank">
@@ -754,9 +719,7 @@ export default function Board(props) {
       return img;
     }
 
-
     //Coge las cartas de rss del jugador y las muestra por pantalla
-
     let playerCards = [];
 
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].resources.brick; i++){
@@ -776,7 +739,6 @@ export default function Board(props) {
     }
 
     //Coge las cartas de dev del jugador y las muestra por pantalla
-
     let devCards = [];
 
     for(let i=0; i<props.G.players[props.ctx.currentPlayer].devCards.length; i++){
@@ -797,6 +759,7 @@ export default function Board(props) {
     let uniqueID = 0;
     let tbody = [];
 
+    //BARRA DE ACCIONES
     let barra =  
     <div className="barraAcciones">
       <div className="cartasPlayer"> 
@@ -947,6 +910,7 @@ export default function Board(props) {
       return 0;
     }
 
+    //TABLA DE ESTADO
     let tablaInfo =
     <div className ="tabla_Info">
       <div className="fila_Info" id="titulo_info">
@@ -1222,9 +1186,6 @@ export default function Board(props) {
       tbody.push(<tr key={`fKey_${i.toString()}`} className={`fila_${i}`}>{cells}</tr>);
     }
     
-    function handleInterClick(index){ //no se usa
-      console.log(index)
-    }
     //arrays de imagenes de circulos
     let cir_imgs = [];
     let cir_carr_imgs = [];
@@ -1343,17 +1304,9 @@ export default function Board(props) {
       )
     }
 
-    /*          {
-        arrInter?.map((element, index) =>{
-
-          return(
-            <button id={`inter_${index}`} onClick={()=>getCoords()}>{element}</button>
-          )
-            
-        })} */
 
     function iplaceRobber(id){
-      //ESTADO:   EN PROCESO
+      //ESTADO:   TERMINADA SIN REVISAR
       //TO-DO: 
       //FUNCION: Ejecuta la accion de mover al ladron
 
@@ -1381,7 +1334,6 @@ export default function Board(props) {
     }
 
     // DIV para seleccionar robar a un jugador
-
     let optionPlayers = [];
     for(let i=0; i<props.ctx.numPlayers; i++){
       let option = <div className = "selectOption" id={`option_${i}`} onClick={() => props.moves.stealRssFromRobber(props.G.players[i].name)}>{props.G.players[i].name}</div>
@@ -1395,6 +1347,7 @@ export default function Board(props) {
       {optionPlayers}
     </div>
 
+    // DIV para seleccionar un recurso de monopolio
     let selectRSS = 
     <div className= "rssContainer" id="selectRSS">
       <h1 className="titulo_select">Selecciona un recurso para el monopolio</h1>
@@ -1415,6 +1368,7 @@ export default function Board(props) {
       </div>
     </div>
 
+    // DIV para seleccionar un recurso de invento
     let selectRSSInv = 
     <div className= "rssContainer" id="selectRSSInv">
       <h1 className="titulo_select">Selecciona un recurso para obtener una cartas</h1>
@@ -1478,29 +1432,6 @@ export default function Board(props) {
         <img className="img_city" id="testImg" src={city_a} alt="img test"/>
       </div>
     );
-  
-
-        /*
-
-                  {<img className="circulo_img" id="circuloimg" src={circulo}/>}
-
-        state.cadenaTexto.map((elemento)=>{
-          // Posicion
-          // CalculaVertices
-          // Relacion de posiciones
-          //array = [[100, 120], [100, 140]]
-          //if(elemento == "b"){
-          //  return(<img src={circulo}/>)
-          //}
-          
-        })
-
-
-                Aqui se pone info de la partida y cartas
-        1 - Array con la representacion de la interseccion.
-        2 - Manera de calcular la posicion de la interseccion.
-        ["o","b",.....]
-        */
 
 
 

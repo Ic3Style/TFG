@@ -485,3 +485,52 @@ function shuffle (array) {
 
   }
 */
+
+/*          {
+    arrInter?.map((element, index) =>{
+
+      return(
+        <button id={`inter_${index}`} onClick={()=>getCoords()}>{element}</button>
+      )
+        
+    })} */
+
+    /*
+
+    state.cadenaTexto.map((elemento)=>{
+      // Posicion
+      // CalculaVertices
+      // Relacion de posiciones
+      //array = [[100, 120], [100, 140]]
+      //if(elemento == "b"){
+      //  return(<img src={circulo}/>)
+      //}
+      
+    })
+
+    */
+
+        /* useEffect(() => {
+          let arrayTemp=[];
+          for (let i=0; i<=5; i++){
+            for(let j=0; j<=3; j++){
+              arrayTemp.push("o")
+            }
+          }
+          setArrVertice(arrayTemp)
+     }, []);
+     useEffect(() => {
+        let arrayTemp=[];
+        for (let i=0; i<=5; i++){
+          for(let j=0; j<=3; j++){
+            arrayTemp.push("o")
+          }
+        }
+        setArrVertice(arrayTemp)
+      }, [state]);
+      */
+
+      /*
+     const [arrInter, setArrInter] = useState(["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"]);
+     const [arrCarr, setarrCarr] = useState(["o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o","o","o","o","o","o","o","o","o","o", "o"]);
+      */
