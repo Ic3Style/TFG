@@ -565,14 +565,18 @@ export default function Board(props) {
       hideCirInter();
       hideSRSSInvPop();
       console.log("Count "+props.G.countInvent)
-      if(props.G.countInvent === 0){
-        props.moves.useInvent(rss)
-        showSRSSInvPop()
+      if(props.G.devCardUsed === false){
+        if(props.G.countInvent === 0){
+          props.moves.useInvent(rss)
+          showSRSSInvPop()
+        }
+        else{
+          props.moves.useInvent(rss)
+        }
       }
       else{
         props.moves.useInvent(rss)
       }
- 
     }
 
     function iuseRBuild(){
@@ -584,6 +588,36 @@ export default function Board(props) {
       props.moves.useRoadBuild()
     }
 
+    function tradeBankPop(){
+      cancelTradePop()
+
+      let popElem = document.getElementById("selectUserRss");
+      let bg = document.getElementById("bg_pop");
+
+      bg.style.display = "flex";
+      popElem.style.display = "flex";
+
+    }
+
+    function cancelTradeBankPop(){
+      let popElem = document.getElementById("selectUserRss");
+      let bg = document.getElementById("bg_pop");
+
+      bg.style.display = "none";
+      popElem.style.display = "none";
+
+    }
+
+    function tradeUser(G, ctx){
+      props.moves.tradePlayers(G, ctx);
+
+      let popElem = document.getElementById("tradePopUp");
+      let bg = document.getElementById("bg_pop");
+
+      bg.style.display = "none";
+      popElem.style.display = "none";
+    }
+
     //Pop up general
     let bgPop =
     <div className="bgPop" id="bg_pop">
@@ -593,10 +627,10 @@ export default function Board(props) {
     let tradePopUp =
     <div className="tradeContainer" id="tradePopUp">
       <div className="tradeOption" id="tradeBank">
-        <img className="tradeOption_img" id="img_bank" src={bank} alt="Imagen de banco"/>
+        <img className="tradeOption_img" id="img_bank" src={bank} alt="Imagen de banco" onClick={() => tradeBankPop()}/>
       </div>
       <div className="tradeOption" id="tradePlayers">
-        <img  className="tradeOption_img" src={users} alt="Imagen de users"/>
+        <img  className="tradeOption_img" src={users} alt="Imagen de users" onClick={() => tradeUser()}/>
       </div>
       <div className="cancel" onClick={() => cancelTradePop()}>
         <img id="cancel_img" src={cancel} alt="Imagen de cruz"/>
@@ -870,7 +904,7 @@ export default function Board(props) {
       let nPlayers = props.ctx.numPlayers;
 
       if(i<nPlayers){
-        LRoad = props.G.players[i].biggestRoad;
+        LRoad = props.G.players[i].roads.length;
       }
 
       return LRoad;
@@ -1368,6 +1402,35 @@ export default function Board(props) {
       </div>
     </div>
 
+    function checkUserRss(G, ctx, rss) {
+      props.moves.tradeBank(G, ctx, rss);
+      cancelTradeBankPop();
+    }
+
+    // DIV para seleccionar un rss para comerciar con el banco
+    let selectUserRss = 
+    <div className= "rssContainer" id="selectUserRss">
+      <h1 className="titulo_select">Selecciona que recurso quieres dar:</h1>
+      <div className="optionRSS" id="brick_option" onClick = {() => checkUserRss("brick")}>
+        <img src={card_brick} className="img_rss_opt" alt="Rss de ladrillo"/>
+      </div>
+      <div className="optionRSS" id="lumber_option" onClick = {() => checkUserRss("lumber")}>
+      <img src={card_lumber} className="img_rss_opt" alt="Rss de madera" />
+      </div>
+      <div className="optionRSS" id="wool_option" onClick = {() => checkUserRss("wool")}>
+      <img src={card_wool} className="img_rss_opt" alt="Rss de lana" />
+      </div>
+      <div className="optionRSS" id="grain_option" onClick = {() => checkUserRss("grain")}>
+      <img src={card_grain} className="img_rss_opt" alt="Rss de grano" />
+      </div>
+      <div className="optionRSS" id="ore_option" onClick = {() => checkUserRss("ore")}>
+      <img src={card_ore} className="img_rss_opt" alt="Rss de mineral" />
+      </div>
+      <div className="cancel" onClick={() => cancelTradeBankPop()}>
+        <img id="cancel_img" src={cancel} alt="Imagen de cruz"/>
+      </div>
+    </div>
+
     // DIV para seleccionar un recurso de invento
     let selectRSSInv = 
     <div className= "rssContainer" id="selectRSSInv">
@@ -1423,6 +1486,8 @@ export default function Board(props) {
 
         {selectPlayer}
         {selectRSS}
+
+        {selectUserRss}
 
         {selectRSSInv}
         

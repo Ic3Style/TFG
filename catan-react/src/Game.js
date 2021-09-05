@@ -111,6 +111,7 @@ export const Catan = {
             useMonopoly,
             useRoadBuild,
             tradeBank,
+            tradePlayers,
             
             addRss: (G, ctx, num) => { //ADMIN ACTION
 
@@ -775,6 +776,7 @@ export const Catan = {
           G.roadsToBuild--;
     }
 
+    checkRoadLeader(G, ctx);
   }
 
   function buildCity (G, ctx, id){
@@ -1023,14 +1025,14 @@ export const Catan = {
     return res;
   }
 
-  function tradeBank(G,ctx){
+  function tradeBank(G,ctx,rss){
     //ESTADO: EN PROCESO
     //TO-DO: PUERTOS
     //FUNCIÓN: Comercia con el banco
 
     let cPlayer = G.players[ctx.currentPlayer];
 
-    let rss = prompt("¿Que recurso quieres dar al banco? (ore, lumber, brick, wool, grain, none");
+    //let rss = prompt("¿Que recurso quieres dar al banco? (ore, lumber, brick, wool, grain, none");
 
     switch(rss){
       case "ore":
@@ -1196,7 +1198,7 @@ export const Catan = {
     
     while(receive !== "end"){
       receive = prompt("¿Que quieres a cambio?: (ore, grain, wool, brick, lumber)/ 'end' para terminar");
-      switch(give){
+      switch(receive){
         case "ore":
           receiveOffer.push("ore");
           break;
@@ -1220,7 +1222,94 @@ export const Catan = {
       }
     }
 
-    //TO_DO: FALTA QUE EL OTRO JUGADOR ACEPTE O DECLINE LA OFERTA (EN CUYO CASO SE LE DEVUELVEN LOS RSS)
+    
+
+    let ans = prompt("La oferta es : El jugador "+cPlayer.name+" ofrece "+giveOffer+" al jugador "+selPlayer+" a cambio de "+receiveOffer+ ". ¿Acepta el jugador "+selPlayer+"? Si/No");
+    /*while(ans !== "Si" || ans !== "No")
+      alert("Answer: "+ans)
+      ans = prompt("Respuesta no valida. La oferta es : El jugador "+cPlayer.name+" ofrece "+giveOffer+" al jugador "+selPlayer+" a cambio de "+receiveOffer+ ". ¿Acepta el jugador "+selPlayer+"? si/no");*/
+
+    if(ans === "Si"){
+      let legit = checkReceiveOffer(G, selPlayer, receiveOffer)
+      if(!legit){
+        alert(selPlayer+ "no tiene los recursos necesarios!")
+      }
+      else{
+        let targetPlayer;
+        for(let i = 0; i<G.players.length ; i++){
+          let auxPlayer = G.players[i];
+          if(auxPlayer.name === selPlayer)
+            targetPlayer = auxPlayer;
+        }
+        for(let i =0; i< receiveOffer.length; i++){
+          let elem = receiveOffer[i];
+          switch(elem){
+            case "ore":
+              targetPlayer.resources.ore--;
+              cPlayer.resources.ore++;
+              break;
+            case "wool":
+              targetPlayer.resources.wool--;
+              cPlayer.resources.wool++;
+              break;
+            case "brick":
+              targetPlayer.resources.brick--;
+              cPlayer.resources.brick++;
+              break;
+            case "grain":
+              targetPlayer.resources.grain--;
+              cPlayer.resources.grain++;
+              break;
+            case "lumber":
+              targetPlayer.resources.lumber--;
+              cPlayer.resources.lumber++;
+              break;
+          }
+        }
+        alert("Intercambio realizado con exito")
+      }
+    }
+    else if(ans !== "No"){
+      alert("Respuesta no valida, se tomará como un No")
+    }
+    
+      
+  }
+
+  function checkReceiveOffer(G, selPlayer, receiveOffer){
+    let cPlayer;
+    for(let i = 0; i<G.players.length ; i++){
+      let auxPlayer = G.players[i];
+      if(auxPlayer.name === selPlayer)
+        cPlayer = auxPlayer;
+    }
+
+    let ore, grain, wool, brick, lumber = 0;
+
+    for(let i =0; i< receiveOffer.length; i++){
+      let elem = receiveOffer[i];
+      switch(elem){
+        case "ore":
+          ore++;
+          break;
+        case "wool":
+          wool++;
+          break;
+        case "brick":
+          brick++;
+          break;
+        case "grain":
+          grain++;
+          break;
+        case "lumber":
+          lumber++;
+          break;
+      }
+    }
+
+    if(cPlayer.resources.ore < ore || cPlayer.resources.wool < wool || cPlayer.resources.brick < brick || cPlayer.resources.grain < grain || cPlayer.resources.lumber < lumber)
+      return false;
+    else return true;
   }
 
 
@@ -1284,10 +1373,7 @@ export const Catan = {
         if(cPlayer.usedKnights > G.players[G.largestArmyId].usedKnights){
           cPlayer.largestArmy = true;
           cPlayer.points += 2;
-          /*
-          G[playerAuxId].largestArmy = false;
-          G[playerAuxId].points -=2;
-          */
+       
           G.players[G.largestArmyId].largestArmy = false;
           G.players[G.largestArmyId].points -=2;
           alert("La carta de mayor ejercito pasa del jugador "+G.largestArmyId +" al jugador "+ctx.currentPlayer);
@@ -1298,7 +1384,42 @@ export const Catan = {
         //El jugador ya tiene el ejercito mas grande
       }
     }
+  }
 
+  function checkRoadLeader(G, ctx){
+    //ESTADO: EN PROCESO
+    //FUNCION: Comprueba si hay que cambiar la carta de mayor ruta comercial
+    
+    let cPlayer = G.players[ctx.currentPlayer];
+
+    //si la carta no ha sido reclamada por nadie
+    if(G.longestRoadId === -1){
+      if(cPlayer.roads.length >= 4){
+        cPlayer.longestRoad = true;
+        G.longestRoadId = ctx.currentPlayer;
+        cPlayer.points += 2;
+        alert("La carta de mayor ruta comercial pasa a ser del jugador "+ctx.currentPlayer);
+      }
+    }
+    //si la carta ya la tiene algun jugador
+    else{
+      if(cPlayer.longestRoad === false){
+        //let playerAuxId = 'player_' + G.largestArmyId;
+        //si hay un nuevo lider se cambia la carta de duenho
+        if(cPlayer.roads.length > G.players[G.largestArmyId].roads.length){
+          cPlayer.longestRoad = true;
+          cPlayer.points += 2;
+       
+          G.players[G.longestRoadId].longestRoad = false;
+          G.players[G.longestRoadId].points -=2;
+          alert("La carta de mayor ejercito pasa del jugador "+G.longestRoadId +" al jugador "+ctx.currentPlayer);
+          G.longestRoadId = ctx.currentPlayer;
+        }       
+      }
+      else{
+        //El jugador ya tiene el ejercito mas grande
+      }
+    }
   }
 
   function useInvent(G, ctx, rss){
@@ -1582,7 +1703,7 @@ export const Catan = {
     //JUGADORES
 
     function askName(i){
-      let newName = prompt("Escoge nombre para el jugador :"+i)
+      let newName = prompt("Escoge nombre para el jugador :"+i +" (Es posible que lo pida 2 veces)")
       return newName
     }
 
@@ -1595,12 +1716,11 @@ export const Catan = {
 
     for(let i=0; i<ctx.numPlayers; i++){
       let newPlayer = {
-        //name : askName(i),
+        name : askName(i),
         id: i,
-        name : "player_"+i,
+        //name : "player_"+i,
         color : getColour(i),
         points : 0,
-        biggestRoad : 0, //falta modificar esto
         longestRoad : false,
         usedKnights : 0,
         largestArmy : false,

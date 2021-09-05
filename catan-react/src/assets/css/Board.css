@@ -482,7 +482,7 @@
     justify-content: center;
 
     top: 35%;
-    left: 35%;
+    left: 25%;
 
     border: 3px solid black;
     border-radius: 3%;
@@ -496,9 +496,9 @@
     justify-content: center;
 
     height: 25%;
-    width: 75px;
-    margin: 10%;
-    margin-top: 25%;
+    width: 150px;
+    margin: 5%;
+    margin-top: 14%;
     padding: 1%;
 
     background-color: white;

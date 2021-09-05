@@ -61,8 +61,8 @@ const App = Client({
   game: Catan,
   board: Board,
   debug: true,
-  //numPlayers: setNumPlayers(), //DESCOMENTAR
-  numPlayers: 3,
+  numPlayers: setNumPlayers(), //DESCOMENTAR
+  //numPlayers: 3,
 });
 
 /*
