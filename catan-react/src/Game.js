@@ -509,6 +509,7 @@ export const Catan = {
     let numberDice = diceRoll();
     G.diceValue = numberDice;
     console.log("Ha salido el numero "+numberDice);
+    alert("Ha salido el numero "+numberDice);
     
     if(numberDice === 7){
       
