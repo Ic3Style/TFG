@@ -1285,7 +1285,13 @@ export const Catan = {
         cPlayer = auxPlayer;
     }
 
-    let ore, grain, wool, brick, lumber = 0;
+    let ore = 0;
+    let grain = 0;
+    let wool = 0;
+    let brick = 0;
+    let lumber = 0;
+
+    alert(receiveOffer)
 
     for(let i =0; i< receiveOffer.length; i++){
       let elem = receiveOffer[i];
